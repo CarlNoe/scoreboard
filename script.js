@@ -177,7 +177,7 @@ function generateScoreboard(players) {
   // Draw header
   ctx.fillStyle = "#fff";
   ctx.font = "bold 32px sans-serif";
-  ctx.fillText("Scoreboard - Total Capture Count", 20, 40);
+  ctx.fillText("Total des Pokemons capturés", 20, 40);
 
   // Draw a line under the header
   ctx.strokeStyle = "#fff";
