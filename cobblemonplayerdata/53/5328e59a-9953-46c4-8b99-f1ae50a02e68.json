@@ -1,0 +1,132 @@
+{
+  "uuid": "5328e59a-9953-46c4-8b99-f1ae50a02e68",
+  "starterPrompted": true,
+  "starterLocked": false,
+  "starterSelected": true,
+  "starterUUID": "5dd2f554-9963-4567-b7d9-4f60e71e2133",
+  "keyItems": [],
+  "battleTheme": "cobblemon:battle.pvp.default",
+  "extraData": {
+    "cobbledex_discovery": {
+      "registers": {
+        "piplup": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1739996528022,
+            "caughtTimestamp": 1739996528022
+          }
+        },
+        "purrloin": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740001927824,
+            "caughtTimestamp": 1740001927824
+          }
+        },
+        "mewtwo": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740005163822,
+            "caughtTimestamp": 1740005163822
+          }
+        }
+      },
+      "name": "cobbledex_discovery"
+    },
+    "Cobbledex_RewardHistory": {
+      "received": [
+        "1",
+        "2",
+        "3"
+      ],
+      "name": "Cobbledex_RewardHistory"
+    },
+    "captureCount": {
+      "name": "captureCount",
+      "defeats": {
+        "piplup": 1,
+        "purrloin": 1,
+        "mewtwo": 1
+      }
+    },
+    "yacb$boostManager": {
+      "name": "yacb$boostManager",
+      "manager": {
+        "shinyBoost": {
+          "active": false,
+          "amplifier": 0.0,
+          "ticksRemain": 0
+        },
+        "speciesWeightBoosts": {},
+        "labelWeightBoosts": {},
+        "endedBoosts": [],
+        "shouldSave": true,
+        "saveTimer": 1200
+      }
+    },
+    "koStreak": {
+      "name": "koStreak",
+      "species": "mankey",
+      "count": 1
+    },
+    "koCount": {
+      "name": "koCount",
+      "defeats": {
+        "litleo": 1,
+        "mankey": 1
+      }
+    },
+    "captureStreak": {
+      "name": "captureStreak",
+      "species": "mewtwo",
+      "count": 1
+    },
+    "encounter": {
+      "name": "encounter",
+      "encounters": {
+        "bewear": true,
+        "bellsprout": true,
+        "piplup": true,
+        "primeape": true,
+        "purrloin": true,
+        "mewtwo": true,
+        "litleo": true,
+        "mankey": true
+      }
+    },
+    "cobblenavPlayerStatsData": {
+      "name": "cobblenavPlayerStatsData",
+      "totalPvpCount": 0,
+      "startDate": 1739996528022,
+      "grantedBadges": [],
+      "pokemonUsage": {
+        "5dd2f554-9963-4567-b7d9-4f60e71e2133": 3,
+        "c106bde9-da74-4b0d-8330-dc237b5cd021": 3,
+        "abaac87d-da32-4e2b-b52e-b6fe6a549cd5": 3
+      }
+    }
+  },
+  "advancementData": {
+    "totalCaptureCount": 2,
+    "totalEggsHatched": 0,
+    "totalEvolvedCount": 0,
+    "totalBattleVictoryCount": 2,
+    "totalPvPBattleVictoryCount": 0,
+    "totalPvWBattleVictoryCount": 2,
+    "totalPvNBattleVictoryCount": 0,
+    "totalShinyCaptureCount": 0,
+    "totalTradedCount": 0,
+    "totalTypeCaptureCounts": {
+      "dark": 1,
+      "psychic": 1
+    },
+    "totalDefeatedCounts": {
+      "cobblemon:litleo": 1,
+      "cobblemon:mankey": 1
+    },
+    "aspectsCollected": {}
+  }
+}
