@@ -32,6 +32,14 @@
             "discoveredTimestamp": 1740005163822,
             "caughtTimestamp": 1740005163822
           }
+        },
+        "aipom": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740007002802,
+            "caughtTimestamp": 1740007002802
+          }
         }
       },
       "name": "cobbledex_discovery"
@@ -40,7 +48,8 @@
       "received": [
         "1",
         "2",
-        "3"
+        "3",
+        "4"
       ],
       "name": "Cobbledex_RewardHistory"
     },
@@ -49,7 +58,8 @@
       "defeats": {
         "piplup": 1,
         "purrloin": 1,
-        "mewtwo": 1
+        "mewtwo": 1,
+        "aipom": 1
       }
     },
     "yacb$boostManager": {
@@ -63,25 +73,26 @@
         "speciesWeightBoosts": {},
         "labelWeightBoosts": {},
         "endedBoosts": [],
-        "shouldSave": true,
-        "saveTimer": 1200
+        "shouldSave": false,
+        "saveTimer": 433
       }
     },
     "koStreak": {
       "name": "koStreak",
-      "species": "mankey",
+      "species": "bounsweet",
       "count": 1
     },
     "koCount": {
       "name": "koCount",
       "defeats": {
-        "litleo": 1,
-        "mankey": 1
+        "litleo": 2,
+        "mankey": 1,
+        "bounsweet": 1
       }
     },
     "captureStreak": {
       "name": "captureStreak",
-      "species": "mewtwo",
+      "species": "aipom",
       "count": 1
     },
     "encounter": {
@@ -94,7 +105,9 @@
         "purrloin": true,
         "mewtwo": true,
         "litleo": true,
-        "mankey": true
+        "mankey": true,
+        "bounsweet": true,
+        "aipom": true
       }
     },
     "cobblenavPlayerStatsData": {
@@ -103,29 +116,31 @@
       "startDate": 1739996528022,
       "grantedBadges": [],
       "pokemonUsage": {
-        "5dd2f554-9963-4567-b7d9-4f60e71e2133": 3,
-        "c106bde9-da74-4b0d-8330-dc237b5cd021": 3,
-        "abaac87d-da32-4e2b-b52e-b6fe6a549cd5": 3
+        "5dd2f554-9963-4567-b7d9-4f60e71e2133": 5,
+        "c106bde9-da74-4b0d-8330-dc237b5cd021": 5,
+        "abaac87d-da32-4e2b-b52e-b6fe6a549cd5": 5
       }
     }
   },
   "advancementData": {
-    "totalCaptureCount": 2,
+    "totalCaptureCount": 3,
     "totalEggsHatched": 0,
     "totalEvolvedCount": 0,
-    "totalBattleVictoryCount": 2,
+    "totalBattleVictoryCount": 4,
     "totalPvPBattleVictoryCount": 0,
-    "totalPvWBattleVictoryCount": 2,
+    "totalPvWBattleVictoryCount": 4,
     "totalPvNBattleVictoryCount": 0,
     "totalShinyCaptureCount": 0,
     "totalTradedCount": 0,
     "totalTypeCaptureCounts": {
       "dark": 1,
-      "psychic": 1
+      "psychic": 1,
+      "normal": 1
     },
     "totalDefeatedCounts": {
-      "cobblemon:litleo": 1,
-      "cobblemon:mankey": 1
+      "cobblemon:litleo": 2,
+      "cobblemon:mankey": 1,
+      "cobblemon:bounsweet": 1
     },
     "aspectsCollected": {}
   }
