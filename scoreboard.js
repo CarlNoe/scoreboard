@@ -129,15 +129,13 @@ function loadUserCacheMapping() {
   }
 }
 
-// -------------------------------------------
-// Process Player JSON Files to extract leaderboard stats
-// -------------------------------------------
 function readPlayerDataForExcel(namesMapping) {
   const players = [];
   if (!fs.existsSync(CONFIG.ftp.localPath)) {
     console.error(`Local path ${CONFIG.ftp.localPath} does not exist.`);
     return players;
   }
+
   // Each subdirectory in localPath should contain one or more player JSON files.
   // (We ignore the downloaded usercache.json.)
   const directories = fs
@@ -159,16 +157,33 @@ function readPlayerDataForExcel(namesMapping) {
         const normalizedUUID = uuid.toLowerCase();
         // Look up the player name from user cache mapping (fallback to UUID)
         const playerName = namesMapping[normalizedUUID] || uuid;
-        // Extract counts from advancementData (if available)
-        const advancementData = data.advancementData || {};
-        const caughtCount =
-          typeof advancementData.totalCaptureCount === "number"
-            ? advancementData.totalCaptureCount
-            : 0;
-        const shinyCount =
-          typeof advancementData.totalShinyCaptureCount === "number"
-            ? advancementData.totalShinyCaptureCount
-            : 0;
+
+        // Compute counts by iterating over the registers in extraData
+        let caughtCount = 0;
+        let shinyCount = 0;
+        if (
+          data.extraData &&
+          data.extraData.cobbledex_discovery &&
+          data.extraData.cobbledex_discovery.registers
+        ) {
+          const registers = data.extraData.cobbledex_discovery.registers;
+          for (const key in registers) {
+            if (registers.hasOwnProperty(key)) {
+              const record = registers[key];
+              // Assuming we count from the "normal" variant:
+              if (record.normal && record.normal.status === "CAUGHT") {
+                caughtCount++;
+                if (
+                  record.normal.isShiny === true ||
+                  record.normal.isShiny === "True"
+                ) {
+                  shinyCount++;
+                }
+              }
+            }
+          }
+        }
+
         players.push({ playerName, caughtCount, shinyCount });
       } catch (err) {
         console.error(`Error processing file ${filePath}:`, err);
@@ -275,10 +290,28 @@ async function main() {
   // 5. Sort players to create two leaderboards:
   // • Most Pokemons leaderboard (sorted by caughtCount descending)
   // • Shiny leaderboard (sorted by shinyCount descending)
-  const mostPlayers = [...players].sort(
-    (a, b) => b.caughtCount - a.caughtCount
-  );
-  const shinyPlayers = [...players].sort((a, b) => b.shinyCount - a.shinyCount);
+  let mostPlayers = [...players].sort((a, b) => b.caughtCount - a.caughtCount);
+  let shinyPlayers = [...players].sort((a, b) => b.shinyCount - a.shinyCount);
+
+  // Apply ignore names if set in the config
+  if (CONFIG.leaderboard.most.ignoreNames) {
+    const ignoreNames = CONFIG.leaderboard.most.ignoreNames
+      .split(",")
+      .map((n) => n.trim())
+      .filter((n) => n);
+    mostPlayers = mostPlayers.filter(
+      (player) => !ignoreNames.includes(player.playerName)
+    );
+  }
+  if (CONFIG.leaderboard.shiny.ignoreNames) {
+    const ignoreNames = CONFIG.leaderboard.shiny.ignoreNames
+      .split(",")
+      .map((n) => n.trim())
+      .filter((n) => n);
+    shinyPlayers = shinyPlayers.filter(
+      (player) => !ignoreNames.includes(player.playerName)
+    );
+  }
 
   // 6. Generate the Excel file with both leaderboards
   await generateExcelOutput(mostPlayers, shinyPlayers);
