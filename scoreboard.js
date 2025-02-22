@@ -1,43 +1,41 @@
 const ftp = require("basic-ftp");
 const fs = require("fs");
 const path = require("path");
-const { generateTableImage } = require("./tableRenderer");
+const ExcelJS = require("exceljs");
 
 // -------------------------------------------
-// Configuration: Easily adjust these settings
+// Configuration: Adjust these settings as needed
 // -------------------------------------------
 const CONFIG = {
   ftp: {
     host: "ftp.nitroserv.games", // FTP server address
     port: 21, // FTP port
     user: "53323-id", // FTP username
-    password: "azer", // FTP password (fill in if needed)
+    password: "azer", // FTP password
     remotePath: "/Minecraft/world/cobblemonplayerdata", // Remote directory with player data
     localPath: "./cobblemonplayerdata", // Local directory where files will be saved
     remoteUserCache: "/Minecraft/usercache.json", // Remote location of usercache.json
   },
-  scoreboard: {
-    outputImage: "scoreboard.png", // Output image file name
-    numCols: 3, // Number of columns in the scoreboard table
+  leaderboard: {
+    outputExcel: "output.xlsx", // Excel file name that will contain the leaderboards
+    most: {
+      enable: true,
+      sheetName: "leaderboard2",
+      excelRows: 10, // number of rows per column block
+      excelColumns: 3, // number of column blocks (each block uses 3 columns: rank, name, stat)
+      subtitle: "Most Pokemons Captured",
+    },
+    shiny: {
+      enable: true,
+      sheetName: "leaderboard3",
+      excelRows: 10,
+      excelColumns: 3,
+      subtitle: "Shiny Pokemons Leaderboard",
+    },
   },
 };
 
-const TableOptions = {
-  numCols: 5,
-  numRows: 7,
-  title: "Total Pokemons Captured",
-  canvasWidth: 800,
-  tablePadding: 40,
-  titleFont: "bold 30px Arial",
-  titleHeight: 60,
-  headerHeight: 60,
-  rowHeight: 40,
-  headerFont: "bold 24px Arial",
-  bodyFont: "20px Arial",
-  tableBorderRadius: 10,
-};
-
-// Derived configuration
+// Derived configuration: local user cache file path
 const USER_CACHE_FILE = path.join(CONFIG.ftp.localPath, "usercache.json");
 
 // -------------------------------------------
@@ -46,7 +44,7 @@ const USER_CACHE_FILE = path.join(CONFIG.ftp.localPath, "usercache.json");
 function clearLocalData() {
   if (fs.existsSync(CONFIG.ftp.localPath)) {
     fs.rmSync(CONFIG.ftp.localPath, { recursive: true, force: true });
-    console.log(`Cleared local player data in ${CONFIG.ftp.localPath}`);
+    console.log(`Cleared local data in ${CONFIG.ftp.localPath}`);
   }
 }
 
@@ -92,13 +90,15 @@ async function downloadPlayerData() {
       secure: false,
     });
     console.log("Connected to FTP server.");
+    // Download the entire folder with player data
     await downloadFolder(client, CONFIG.ftp.remotePath, CONFIG.ftp.localPath);
+    // Download the user cache (for UUID→username mapping)
     await downloadUserCache(
       client,
       CONFIG.ftp.remoteUserCache,
       USER_CACHE_FILE
     );
-    console.log("Download complete.");
+    console.log("FTP download complete.");
   } catch (err) {
     console.error("An error occurred during FTP download:", err);
   } finally {
@@ -107,110 +107,179 @@ async function downloadPlayerData() {
 }
 
 // -------------------------------------------
-// Scoreboard Generation Section
+// Load User Cache Mapping
 // -------------------------------------------
-function loadUserCache() {
+function loadUserCacheMapping() {
   if (!fs.existsSync(USER_CACHE_FILE)) {
     console.error(`User cache file not found at ${USER_CACHE_FILE}`);
     return {};
   }
   try {
     const data = JSON.parse(fs.readFileSync(USER_CACHE_FILE, "utf8"));
-    const cache = {};
+    const mapping = {};
     data.forEach((entry) => {
-      cache[entry.uuid.toLowerCase()] = entry.name;
+      mapping[entry.uuid.toLowerCase()] = entry.name;
     });
-    return cache;
+    return mapping;
   } catch (error) {
     console.error("Error reading usercache.json:", error);
     return {};
   }
 }
 
-function readPlayerData(userCache) {
+// -------------------------------------------
+// Process Player JSON Files to extract leaderboard stats
+// -------------------------------------------
+function readPlayerDataForExcel(namesMapping) {
   const players = [];
+  if (!fs.existsSync(CONFIG.ftp.localPath)) {
+    console.error(`Local path ${CONFIG.ftp.localPath} does not exist.`);
+    return players;
+  }
+  // Each subdirectory in localPath should contain one or more player JSON files.
+  // (We ignore the downloaded usercache.json.)
   const directories = fs
     .readdirSync(CONFIG.ftp.localPath, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
+
   directories.forEach((dir) => {
     const dirPath = path.join(CONFIG.ftp.localPath, dir);
     const jsonFiles = fs
       .readdirSync(dirPath)
-      .filter((file) => file.endsWith(".json"));
+      .filter((file) => file.endsWith(".json") && file !== "usercache.json");
     jsonFiles.forEach((file) => {
       const filePath = path.join(dirPath, file);
       try {
-        const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-        let uuid = data.uuid || "Unknown";
+        const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+        // Get UUID either from file content or from the file name
+        let uuid = data.uuid || path.basename(file, ".json");
         const normalizedUUID = uuid.toLowerCase();
-        const playerName = userCache[normalizedUUID] || uuid;
-        const totalCaptureCount = data.advancementData
-          ? data.advancementData.totalCaptureCount
-          : 0;
-        players.push({ playerName, totalCaptureCount });
-      } catch (error) {
-        console.error(`Error parsing file ${filePath}:`, error);
+        // Look up the player name from user cache mapping (fallback to UUID)
+        const playerName = namesMapping[normalizedUUID] || uuid;
+        // Extract counts from advancementData (if available)
+        const advancementData = data.advancementData || {};
+        const caughtCount =
+          typeof advancementData.totalCaptureCount === "number"
+            ? advancementData.totalCaptureCount
+            : 0;
+        const shinyCount =
+          typeof advancementData.totalShinyCaptureCount === "number"
+            ? advancementData.totalShinyCaptureCount
+            : 0;
+        players.push({ playerName, caughtCount, shinyCount });
+      } catch (err) {
+        console.error(`Error processing file ${filePath}:`, err);
       }
     });
   });
   return players;
 }
 
-/**
- * Converts the players array into table data.
- * The first row is the header.
- *
- * @param {Object[]} players
- * @returns {string[][]}
- */
-function generateScoreboardTableData(players) {
-  // Sort players descending by capture count.
-  players.sort((a, b) => b.totalCaptureCount - a.totalCaptureCount);
-  const tableData = [["Rank", "Player", "Captures"]];
-  players.forEach((player, index) => {
-    tableData.push([
-      (index + 1).toString(),
-      player.playerName,
-      player.totalCaptureCount.toString(),
-    ]);
-  });
-  return tableData;
-}
+// -------------------------------------------
+// Generate Excel Leaderboards using ExcelJS
+// -------------------------------------------
+async function generateExcelOutput(mostPlayers, shinyPlayers) {
+  // Load the template file instead of creating a new workbook
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile("template.xlsx");
 
-function saveCanvasToFile(canvas, outputPath) {
-  const buffer = canvas.toBuffer("image/png");
-  fs.writeFileSync(outputPath, buffer);
-  console.log(`Scoreboard saved to ${outputPath}`);
+  // Helper function: write/update a leaderboard sheet given sorted entries and a key (caughtCount or shinyCount)
+  async function writeLeaderboard(sheetName, entries, statKey, configSection) {
+    // Try to get the worksheet from the template; if not found, create a new one
+    let sheet = workbook.getWorksheet(sheetName);
+    if (!sheet) {
+      sheet = workbook.addWorksheet(sheetName);
+    }
+
+    const excelRows = configSection.excelRows;
+    const excelCols = configSection.excelColumns;
+    const totalEntries = excelRows * excelCols;
+    const topEntries = entries.slice(0, totalEntries);
+
+    topEntries.forEach((player, i) => {
+      const rowNum = (i % excelRows) + 3; // starting at row 3
+      const colOffset = Math.floor(i / excelRows) * 3; // each block uses 3 columns
+      sheet.getCell(rowNum, 2 + colOffset).value = i + 1 + ".";
+      sheet.getCell(rowNum, 3 + colOffset).value = player.playerName;
+      sheet.getCell(rowNum, 4 + colOffset).value = player[statKey];
+    });
+
+    // Write update timestamp and subtitle
+    const now = new Date();
+    const updateString =
+      "Dernière update le " +
+      now.getDate().toString().padStart(2, "0") +
+      "." +
+      (now.getMonth() + 1).toString().padStart(2, "0") +
+      "." +
+      now.getFullYear().toString().slice(-2) +
+      " à " +
+      now.getHours().toString().padStart(2, "0") +
+      ":" +
+      now.getMinutes().toString().padStart(2, "0");
+    sheet.getCell(excelRows + 3, 2).value = updateString;
+    sheet.getCell(excelRows + 4, 2).value = configSection.subtitle;
+  }
+
+  // Most Pokemons leaderboard (using caughtCount)
+  if (CONFIG.leaderboard.most.enable) {
+    await writeLeaderboard(
+      CONFIG.leaderboard.most.sheetName,
+      mostPlayers,
+      "caughtCount",
+      CONFIG.leaderboard.most
+    );
+  }
+  // Shiny leaderboard (using shinyCount)
+  if (CONFIG.leaderboard.shiny.enable) {
+    await writeLeaderboard(
+      CONFIG.leaderboard.shiny.sheetName,
+      shinyPlayers,
+      "shinyCount",
+      CONFIG.leaderboard.shiny
+    );
+  }
+
+  // Write the updated workbook to your output file
+  await workbook.xlsx.writeFile(CONFIG.leaderboard.outputExcel);
+  console.log(`Excel leaderboard saved to ${CONFIG.leaderboard.outputExcel}`);
 }
 
 // -------------------------------------------
 // Main Execution
 // -------------------------------------------
 async function main() {
-  // Clear local player data before running
+  // 1. Clear local data directory
   clearLocalData();
 
-  // Download the latest data from FTP
+  // 2. Download the latest player data and user cache from FTP
   await downloadPlayerData();
 
-  // Load user cache and read player data from downloaded files
-  const userCache = loadUserCache();
-  const players = readPlayerData(userCache);
-  if (players.length === 0) {
-    console.error(
-      "No player data found in the directory:",
-      CONFIG.ftp.localPath
-    );
+  // 3. Load user cache mapping (UUID → username)
+  const namesMapping = loadUserCacheMapping();
+  if (Object.keys(namesMapping).length === 0) {
+    console.error("User cache mapping is empty – cannot proceed.");
     return;
   }
 
-  // Prepare table data: first row is the header.
-  const tableData = generateScoreboardTableData(players);
+  // 4. Process downloaded player JSON files to extract stats
+  const players = readPlayerDataForExcel(namesMapping);
+  if (players.length === 0) {
+    console.error("No player data found in", CONFIG.ftp.localPath);
+    return;
+  }
 
-  // Generate the table image using the imported function.
-  const canvas = generateTableImage(tableData, TableOptions);
-  saveCanvasToFile(canvas, CONFIG.scoreboard.outputImage);
+  // 5. Sort players to create two leaderboards:
+  // • Most Pokemons leaderboard (sorted by caughtCount descending)
+  // • Shiny leaderboard (sorted by shinyCount descending)
+  const mostPlayers = [...players].sort(
+    (a, b) => b.caughtCount - a.caughtCount
+  );
+  const shinyPlayers = [...players].sort((a, b) => b.shinyCount - a.shinyCount);
+
+  // 6. Generate the Excel file with both leaderboards
+  await generateExcelOutput(mostPlayers, shinyPlayers);
 }
 
 main();
