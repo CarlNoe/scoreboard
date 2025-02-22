@@ -897,6 +897,14 @@
             "discoveredTimestamp": 1740245289989,
             "caughtTimestamp": 1740245289989
           }
+        },
+        "xatu": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740253580407,
+            "caughtTimestamp": 1740253580407
+          }
         }
       },
       "name": "cobbledex_discovery"
@@ -1006,7 +1014,8 @@
         "100",
         "600",
         "101",
-        "102"
+        "102",
+        "103"
       ],
       "name": "Cobbledex_RewardHistory"
     },
@@ -1113,7 +1122,8 @@
         "diggersby": 1,
         "slowpoke": 1,
         "bergmite": 1,
-        "avalugg": 1
+        "avalugg": 1,
+        "xatu": 1
       }
     },
     "yacb$boostManager": {
@@ -1127,8 +1137,8 @@
         "speciesWeightBoosts": {},
         "labelWeightBoosts": {},
         "endedBoosts": [],
-        "shouldSave": false,
-        "saveTimer": 312
+        "shouldSave": true,
+        "saveTimer": 1200
       }
     },
     "koStreak": {
@@ -1146,7 +1156,7 @@
     },
     "captureStreak": {
       "name": "captureStreak",
-      "species": "avalugg",
+      "species": "xatu",
       "count": 1
     },
     "encounter": {
@@ -1257,7 +1267,8 @@
         "diggersby": true,
         "slowpoke": true,
         "bergmite": true,
-        "avalugg": true
+        "avalugg": true,
+        "xatu": true
       }
     },
     "cobblenavPlayerStatsData": {
@@ -1287,7 +1298,7 @@
     }
   },
   "advancementData": {
-    "totalCaptureCount": 89,
+    "totalCaptureCount": 90,
     "totalEggsHatched": 0,
     "totalEvolvedCount": 14,
     "totalBattleVictoryCount": 10,
@@ -1302,8 +1313,8 @@
       "fire": 5,
       "ground": 17,
       "normal": 23,
-      "flying": 11,
-      "psychic": 3,
+      "flying": 12,
+      "psychic": 4,
       "steel": 5,
       "grass": 9,
       "dark": 7,

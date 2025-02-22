@@ -622,6 +622,54 @@
             "discoveredTimestamp": 1740246129306,
             "caughtTimestamp": 1740246129306
           }
+        },
+        "phanpy": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740247159592,
+            "caughtTimestamp": 1740247159592
+          }
+        },
+        "morgrem": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740248826800,
+            "caughtTimestamp": 1740248826800
+          }
+        },
+        "arceus": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740249238279,
+            "caughtTimestamp": 1740249238279
+          }
+        },
+        "unown": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740249900852,
+            "caughtTimestamp": 1740249900852
+          }
+        },
+        "meowth": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740251397561,
+            "caughtTimestamp": 1740251397561
+          }
+        },
+        "scovillain": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740253589454,
+            "caughtTimestamp": 1740253589454
+          }
         }
       },
       "name": "cobbledex_discovery"
@@ -705,7 +753,13 @@
         "74",
         "75",
         "76",
-        "77"
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83"
       ],
       "name": "Cobbledex_RewardHistory"
     },
@@ -720,7 +774,7 @@
         "numel": 1,
         "fearow": 1,
         "taillow": 1,
-        "tauros": 3,
+        "tauros": 4,
         "bewear": 1,
         "bellsprout": 2,
         "drilbur": 3,
@@ -768,7 +822,7 @@
         "komala": 1,
         "camerupt": 1,
         "galvantula": 1,
-        "watchog": 1,
+        "watchog": 2,
         "ralts": 1,
         "slugma": 1,
         "ambipom": 1,
@@ -787,7 +841,13 @@
         "spiritomb": 1,
         "cyndaquil": 1,
         "rhyhorn": 1,
-        "nidoranm": 1
+        "nidoranm": 2,
+        "phanpy": 1,
+        "morgrem": 1,
+        "arceus": 1,
+        "unown": 1,
+        "meowth": 1,
+        "scovillain": 1
       }
     },
     "yacb$boostManager": {
@@ -802,7 +862,7 @@
         "labelWeightBoosts": {},
         "endedBoosts": [],
         "shouldSave": false,
-        "saveTimer": 1119
+        "saveTimer": 752
       }
     },
     "koStreak": {
@@ -818,7 +878,7 @@
     },
     "captureStreak": {
       "name": "captureStreak",
-      "species": "liepard",
+      "species": "scovillain",
       "count": 1
     },
     "encounter": {
@@ -899,7 +959,13 @@
         "spiritomb": true,
         "cyndaquil": true,
         "rhyhorn": true,
-        "nidoranm": true
+        "nidoranm": true,
+        "phanpy": true,
+        "morgrem": true,
+        "arceus": true,
+        "unown": true,
+        "meowth": true,
+        "scovillain": true
       }
     },
     "cobblenavPlayerStatsData": {
@@ -931,7 +997,7 @@
     }
   },
   "advancementData": {
-    "totalCaptureCount": 100,
+    "totalCaptureCount": 109,
     "totalEggsHatched": 0,
     "totalEvolvedCount": 5,
     "totalBattleVictoryCount": 7,
@@ -943,20 +1009,20 @@
     "totalTypeCaptureCounts": {
       "bug": 9,
       "electric": 3,
-      "grass": 11,
-      "normal": 26,
+      "grass": 12,
+      "normal": 29,
       "flying": 11,
-      "fire": 7,
-      "ground": 13,
-      "fighting": 10,
-      "poison": 14,
-      "psychic": 7,
+      "fire": 9,
+      "ground": 14,
+      "fighting": 11,
+      "poison": 15,
+      "psychic": 8,
       "ghost": 18,
-      "dark": 10,
+      "dark": 11,
       "rock": 5,
       "water": 1,
       "steel": 3,
-      "fairy": 1
+      "fairy": 2
     },
     "totalDefeatedCounts": {
       "cobblemon:sandshrew": 1

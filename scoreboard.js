@@ -24,6 +24,7 @@ const CONFIG = {
       excelRows: 10, // number of rows per column block
       excelColumns: 3, // number of column blocks (each block uses 3 columns: rank, name, stat)
       subtitle: "Most Pokemons Captured",
+      ignoreNames: "", // comma-separated list of names to ignore (if any)
     },
     shiny: {
       enable: true,
@@ -31,6 +32,7 @@ const CONFIG = {
       excelRows: 10,
       excelColumns: 3,
       subtitle: "Shiny Pokemons Leaderboard",
+      ignoreNames: "", // comma-separated list of names to ignore (if any)
     },
   },
 };
