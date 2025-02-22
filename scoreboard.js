@@ -4,6 +4,229 @@ const path = require("path");
 const ExcelJS = require("exceljs");
 
 // -------------------------------------------
+// Legendary names filler (all variants)
+// -------------------------------------------
+const legendaryPokemonFiller = [
+  // ============================
+  // LEGENDARY (Non‑Mythical) Pokémon
+  // ============================
+  // Generation I
+  "Articuno",
+  // Regional variants for Articuno:
+  "ArticunoGalar",
+  "Articuno-Galar",
+  "Articuno_Galar",
+  "Galarian Articuno",
+  "Zapdos",
+  "ZapdosGalar",
+  "Zapdos-Galar",
+  "Zapdos_Galar",
+  "Galarian Zapdos",
+  "Moltres",
+  "MoltresGalar",
+  "Moltres-Galar",
+  "Moltres_Galar",
+  "Galarian Moltres",
+  "Mewtwo",
+
+  // Generation II
+  "Raikou",
+  "Entei",
+  "Suicune",
+  "Lugia",
+  "Ho-Oh",
+  "HoOh",
+  "Ho Oh",
+  "Ho_oh",
+  "Ho–Oh",
+  "Ho—Oh",
+
+  // Generation III
+  "Regirock",
+  "Regice",
+  "Registeel",
+  "Latias",
+  "Latios",
+  "Kyogre",
+  "Groudon",
+  "Rayquaza",
+
+  // Generation IV
+  "Uxie",
+  "Mesprit",
+  "Azelf",
+  "Dialga",
+  "Palkia",
+  "Heatran",
+  "Regigigas",
+  "Giratina",
+  "Cresselia",
+
+  // Generation V
+  "Cobalion",
+  "Terrakion",
+  "Virizion",
+  "Tornadus",
+  "Thundurus",
+  "Landorus",
+  "Reshiram",
+  "Zekrom",
+  "Kyurem",
+
+  // Generation VI
+  "Xerneas",
+  "Yveltal",
+  "Zygarde",
+
+  // Generation VII
+  // "Type: Null" variants:
+  "Type: Null",
+  "Type:Null",
+  "Type Null",
+  "TypeNull",
+  "Type – Null",
+  "Type–Null",
+  "Type –Null",
+  "Type– Null",
+  "Type_Null",
+  "Silvally",
+  // Tapu names with multiple spacing/punctuation variants:
+  "Tapu Koko",
+  "TapuKoko",
+  "Tapu-Koko",
+  "Tapu_Koko",
+  "Tapu–Koko",
+  "Tapu—Koko",
+  "Tapu Lele",
+  "TapuLele",
+  "Tapu-Lele",
+  "Tapu_Lele",
+  "Tapu–Lele",
+  "Tapu—Lele",
+  "Tapu Bulu",
+  "TapuBulu",
+  "Tapu-Bulu",
+  "Tapu_Bulu",
+  "Tapu–Bulu",
+  "Tapu—Bulu",
+  "Tapu Fini",
+  "TapuFini",
+  "Tapu-Fini",
+  "Tapu_Fini",
+  "Tapu–Fini",
+  "Tapu—Fini",
+  "Cosmog",
+  "Cosmoem",
+  "Solgaleo",
+  "Lunala",
+  "Necrozma",
+
+  // Generation VIII
+  "Zacian",
+  "Zamazenta",
+  "Eternatus",
+  "Kubfu",
+  "Urshifu",
+  "Regieleki",
+  "Regidrago",
+  "Glastrier",
+  "Spectrier",
+  "Calyrex",
+  "Enamorus",
+
+  // Generation IX
+  // Names with hyphens/dashes:
+  "Wo-Chien",
+  "WoChien",
+  "Wo Chien",
+  "Wo_Chien",
+  "Wo–Chien",
+  "Wo—Chien",
+  "Chien-Pao",
+  "ChienPao",
+  "Chien Pao",
+  "Chien_Pao",
+  "Chien–Pao",
+  "Chien—Pao",
+  "Ting-Lu",
+  "TingLu",
+  "Ting Lu",
+  "Ting_Lu",
+  "Ting–Lu",
+  "Ting—Lu",
+  "Chi-Yu",
+  "ChiYu",
+  "Chi Yu",
+  "Chi_Yu",
+  "Chi–Yu",
+  "Chi—Yu",
+  "Koraidon",
+  "Miraidon",
+  "Okidogi",
+  "Munkidori",
+  "Fezandipiti",
+  "Ogerpon",
+  "Terapagos",
+
+  // ============================
+  // MYTHICAL Pokémon
+  // ============================
+  // Generation I
+  "Mew",
+
+  // Generation II
+  "Celebi",
+
+  // Generation III
+  "Jirachi",
+  "Deoxys",
+
+  // Generation IV
+  "Phione",
+  "Manaphy",
+  "Darkrai",
+  // For Shaymin, include its Sky Forme variants:
+  "Shaymin",
+  "Shaymin Sky",
+  "Shaymin-Sky",
+  "Shaymin_Sky",
+  "Arceus",
+
+  // Generation V
+  "Victini",
+  "Keldeo",
+  // For Meloetta, include forme names:
+  "Meloetta",
+  "Meloetta Aria",
+  "Meloetta-Aria",
+  "Meloetta_Aria",
+  "Meloetta Pirouette",
+  "Meloetta-Pirouette",
+  "Meloetta_Pirouette",
+  "Genesect",
+
+  // Generation VI
+  "Diancie",
+  "Hoopa",
+  "Hoopa-Unbound",
+  "Hoopa Unbound",
+  "Hoopa_Unbound",
+  "Volcanion",
+
+  // Generation VII
+  "Magearna",
+  "Marshadow",
+  "Zeraora",
+  "Meltan",
+  "Melmetal",
+  "Zarude",
+
+  // Generation IX
+  "Pecharunt",
+  "Pecharunt^M", // Include variant marker if needed
+];
+
+// -------------------------------------------
 // Configuration: Adjust these settings as needed
 // -------------------------------------------
 const CONFIG = {
@@ -21,8 +244,8 @@ const CONFIG = {
     most: {
       enable: true,
       sheetName: "leaderboard2",
-      excelRows: 10, // number of rows per column block
-      excelColumns: 3, // number of column blocks (each block uses 3 columns: rank, name, stat)
+      excelRows: 10,
+      excelColumns: 3,
       subtitle: "Most Pokemons Captured",
       ignoreNames: "", // comma-separated list of names to ignore (if any)
     },
@@ -32,6 +255,14 @@ const CONFIG = {
       excelRows: 10,
       excelColumns: 3,
       subtitle: "Shiny Pokemons Leaderboard",
+      ignoreNames: "", // comma-separated list of names to ignore (if any)
+    },
+    legendary: {
+      enable: true,
+      sheetName: "leaderboard4",
+      excelRows: 10,
+      excelColumns: 3,
+      subtitle: "Legendary Captures Leaderboard",
       ignoreNames: "", // comma-separated list of names to ignore (if any)
     },
   },
@@ -129,15 +360,16 @@ function loadUserCacheMapping() {
   }
 }
 
+// -------------------------------------------
+// Process Player Data & Count Legendaries
+// -------------------------------------------
 function readPlayerDataForExcel(namesMapping) {
   const players = [];
   if (!fs.existsSync(CONFIG.ftp.localPath)) {
     console.error(`Local path ${CONFIG.ftp.localPath} does not exist.`);
     return players;
   }
-
   // Each subdirectory in localPath should contain one or more player JSON files.
-  // (We ignore the downloaded usercache.json.)
   const directories = fs
     .readdirSync(CONFIG.ftp.localPath, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
@@ -161,16 +393,20 @@ function readPlayerDataForExcel(namesMapping) {
         // Compute counts by iterating over the registers in extraData
         let caughtCount = 0;
         let shinyCount = 0;
+        let legendaryCount = 0;
         if (
           data.extraData &&
           data.extraData.cobbledex_discovery &&
           data.extraData.cobbledex_discovery.registers
         ) {
           const registers = data.extraData.cobbledex_discovery.registers;
+          // Create a normalized list of legendary names for quick comparison
+          const normalizedLegendaries = legendaryPokemonFiller.map((n) =>
+            n.toLowerCase()
+          );
           for (const key in registers) {
             if (registers.hasOwnProperty(key)) {
               const record = registers[key];
-              // Assuming we count from the "normal" variant:
               if (record.normal && record.normal.status === "CAUGHT") {
                 caughtCount++;
                 if (
@@ -179,12 +415,17 @@ function readPlayerDataForExcel(namesMapping) {
                 ) {
                   shinyCount++;
                 }
+                // Assume the register key is the Pokémon name.
+                // Check if this name (normalized) is in the legendary list.
+                if (normalizedLegendaries.includes(key.toLowerCase())) {
+                  legendaryCount++;
+                }
               }
             }
           }
         }
 
-        players.push({ playerName, caughtCount, shinyCount });
+        players.push({ playerName, caughtCount, shinyCount, legendaryCount });
       } catch (err) {
         console.error(`Error processing file ${filePath}:`, err);
       }
@@ -196,12 +437,16 @@ function readPlayerDataForExcel(namesMapping) {
 // -------------------------------------------
 // Generate Excel Leaderboards using ExcelJS
 // -------------------------------------------
-async function generateExcelOutput(mostPlayers, shinyPlayers) {
+async function generateExcelOutput(
+  mostPlayers,
+  shinyPlayers,
+  legendaryPlayers
+) {
   // Load the template file instead of creating a new workbook
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.readFile("template.xlsx");
 
-  // Helper function: write/update a leaderboard sheet given sorted entries and a key (caughtCount or shinyCount)
+  // Helper function: write/update a leaderboard sheet given sorted entries and a key (e.g., caughtCount, shinyCount, legendaryCount)
   async function writeLeaderboard(sheetName, entries, statKey, configSection) {
     // Try to get the worksheet from the template; if not found, create a new one
     let sheet = workbook.getWorksheet(sheetName);
@@ -257,6 +502,15 @@ async function generateExcelOutput(mostPlayers, shinyPlayers) {
       CONFIG.leaderboard.shiny
     );
   }
+  // Legendary leaderboard (using legendaryCount)
+  if (CONFIG.leaderboard.legendary.enable) {
+    await writeLeaderboard(
+      CONFIG.leaderboard.legendary.sheetName,
+      legendaryPlayers,
+      "legendaryCount",
+      CONFIG.leaderboard.legendary
+    );
+  }
 
   // Write the updated workbook to your output file
   await workbook.xlsx.writeFile(CONFIG.leaderboard.outputExcel);
@@ -280,18 +534,22 @@ async function main() {
     return;
   }
 
-  // 4. Process downloaded player JSON files to extract stats
+  // 4. Process downloaded player JSON files to extract stats (including legendaryCount)
   const players = readPlayerDataForExcel(namesMapping);
   if (players.length === 0) {
     console.error("No player data found in", CONFIG.ftp.localPath);
     return;
   }
 
-  // 5. Sort players to create two leaderboards:
-  // • Most Pokemons leaderboard (sorted by caughtCount descending)
-  // • Shiny leaderboard (sorted by shinyCount descending)
+  // 5. Sort players to create three leaderboards:
+  // • Most Pokemons leaderboard (caughtCount descending)
+  // • Shiny leaderboard (shinyCount descending)
+  // • Legendary leaderboard (legendaryCount descending)
   let mostPlayers = [...players].sort((a, b) => b.caughtCount - a.caughtCount);
   let shinyPlayers = [...players].sort((a, b) => b.shinyCount - a.shinyCount);
+  let legendaryPlayers = [...players].sort(
+    (a, b) => b.legendaryCount - a.legendaryCount
+  );
 
   // Apply ignore names if set in the config
   if (CONFIG.leaderboard.most.ignoreNames) {
@@ -312,9 +570,18 @@ async function main() {
       (player) => !ignoreNames.includes(player.playerName)
     );
   }
+  if (CONFIG.leaderboard.legendary.ignoreNames) {
+    const ignoreNames = CONFIG.leaderboard.legendary.ignoreNames
+      .split(",")
+      .map((n) => n.trim())
+      .filter((n) => n);
+    legendaryPlayers = legendaryPlayers.filter(
+      (player) => !ignoreNames.includes(player.playerName)
+    );
+  }
 
-  // 6. Generate the Excel file with both leaderboards
-  await generateExcelOutput(mostPlayers, shinyPlayers);
+  // 6. Generate the Excel file with all three leaderboards
+  await generateExcelOutput(mostPlayers, shinyPlayers, legendaryPlayers);
 }
 
 main();
