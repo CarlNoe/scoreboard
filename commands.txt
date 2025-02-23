@@ -1,0 +1,3 @@
+python run_excel2img.py output.xlsx leg.png "leaderboard4" "A1:N15"
+python run_excel2img.py output.xlsx most.png "leaderboard2" "A1:N15"
+python run_excel2img.py output.xlsx shiny.png "leaderboard3" "A1:N15"
