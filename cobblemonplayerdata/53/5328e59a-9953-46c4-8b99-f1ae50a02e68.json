@@ -1002,6 +1002,14 @@
             "discoveredTimestamp": 1740513161762,
             "caughtTimestamp": 1740513161762
           }
+        },
+        "snubbull": {
+          "normal": {
+            "isShiny": false,
+            "status": "CAUGHT",
+            "discoveredTimestamp": 1740513298443,
+            "caughtTimestamp": 1740513298443
+          }
         }
       },
       "name": "cobbledex_discovery"
@@ -1133,7 +1141,8 @@
         "122",
         "123",
         "124",
-        "125"
+        "125",
+        "126"
       ],
       "name": "Cobbledex_RewardHistory"
     },
@@ -1261,7 +1270,8 @@
         "steenee": 1,
         "tropius": 1,
         "talonflame": 1,
-        "rockruff": 1
+        "rockruff": 1,
+        "snubbull": 1
       }
     },
     "yacb$boostManager": {
@@ -1275,8 +1285,8 @@
         "speciesWeightBoosts": {},
         "labelWeightBoosts": {},
         "endedBoosts": [],
-        "shouldSave": false,
-        "saveTimer": 429
+        "shouldSave": true,
+        "saveTimer": 1200
       }
     },
     "koStreak": {
@@ -1292,7 +1302,7 @@
     },
     "captureStreak": {
       "name": "captureStreak",
-      "species": "rockruff",
+      "species": "snubbull",
       "count": 1
     },
     "encounter": {
@@ -1421,7 +1431,8 @@
         "tropius": true,
         "talonflame": true,
         "donphan": true,
-        "rockruff": true
+        "rockruff": true,
+        "snubbull": true
       }
     },
     "cobblenavPlayerStatsData": {
@@ -1430,16 +1441,16 @@
       "startDate": 1740072876428,
       "grantedBadges": [],
       "pokemonUsage": {
-        "e9475ad6-e4de-43c1-adfd-1d719714fd74": 59,
-        "369b0e38-49b5-4a7e-8f12-e824b41c3fe0": 59,
+        "e9475ad6-e4de-43c1-adfd-1d719714fd74": 60,
+        "369b0e38-49b5-4a7e-8f12-e824b41c3fe0": 60,
         "1ea3a8a9-e2b5-42bd-9fa5-cd1add996166": 1,
         "60a118c2-99b8-49d1-8eaf-2ba54a7e1ffb": 2,
-        "528f8fe1-b2ee-40b3-9d18-9aa522262520": 66,
+        "528f8fe1-b2ee-40b3-9d18-9aa522262520": 67,
         "1003eae8-5be2-421c-967a-b765d145c525": 5,
-        "d41b5ff6-4ba5-44d6-8276-e05056dad769": 58,
-        "daab1e2a-6665-46a6-b5f1-d51edd2e600d": 1,
+        "d41b5ff6-4ba5-44d6-8276-e05056dad769": 59,
+        "daab1e2a-6665-46a6-b5f1-d51edd2e600d": 2,
         "1b4f3964-7986-4bff-82c1-21690544006f": 4,
-        "aa1a611d-167b-41ec-8669-8cbf68aa03fe": 59,
+        "aa1a611d-167b-41ec-8669-8cbf68aa03fe": 60,
         "2132658b-7e46-46e7-bdd1-024e6c2eef7a": 5,
         "538da056-ccb2-48f4-9861-f069f4e232c1": 1,
         "4390b6ec-4e78-45a7-affe-a3704292d6c8": 1,
@@ -1454,12 +1465,12 @@
     }
   },
   "advancementData": {
-    "totalCaptureCount": 165,
+    "totalCaptureCount": 166,
     "totalEggsHatched": 0,
     "totalEvolvedCount": 5,
-    "totalBattleVictoryCount": 47,
+    "totalBattleVictoryCount": 48,
     "totalPvPBattleVictoryCount": 0,
-    "totalPvWBattleVictoryCount": 47,
+    "totalPvWBattleVictoryCount": 48,
     "totalPvNBattleVictoryCount": 0,
     "totalShinyCaptureCount": 6,
     "totalTradedCount": 1,
@@ -1479,7 +1490,7 @@
       "rock": 8,
       "water": 7,
       "steel": 7,
-      "fairy": 5,
+      "fairy": 6,
       "ice": 2
     },
     "totalDefeatedCounts": {

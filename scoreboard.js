@@ -242,7 +242,7 @@ const CONFIG = {
       enable: true,
       sheetName: "leaderboard2",
       excelRows: 10,
-      excelColumns: 3,
+      excelColumns: 4,
       subtitle: "Most Pokemons Captured",
       ignoreNames: "", // comma-separated list of names to ignore (if any)
     },
@@ -250,7 +250,7 @@ const CONFIG = {
       enable: true,
       sheetName: "leaderboard3",
       excelRows: 10,
-      excelColumns: 3,
+      excelColumns: 4,
       subtitle: "Shiny Pokemons Leaderboard",
       ignoreNames: "", // comma-separated list of names to ignore (if any)
     },
@@ -258,7 +258,7 @@ const CONFIG = {
       enable: true,
       sheetName: "leaderboard4",
       excelRows: 10,
-      excelColumns: 3,
+      excelColumns: 4,
       subtitle: "Legendary Captures Leaderboard",
       ignoreNames: "", // comma-separated list of names to ignore (if any)
     },
