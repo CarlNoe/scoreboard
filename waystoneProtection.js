@@ -7,7 +7,8 @@ const waystoneIds = [
   "waystones:sandy_waystone",
 ];
 
-const operators = ["ashbee", "NeoPreda"];
+// Convert all operator names to lower case
+const operators = ["ashbee", "neopreda"];
 
 const checkIsWaystone = (blockId) => waystoneIds.includes(blockId);
 
@@ -16,6 +17,7 @@ BlockEvents.placed((event) => {
 
   if (!checkIsWaystone(block.id)) return;
 
+  // Use proper template literals with backticks
   const posKey = `${block.x},${block.y},${block.z}`;
 
   global.waystoneOwners[posKey] = player.username.toLowerCase();
@@ -27,6 +29,7 @@ BlockEvents.broken((event) => {
 
   if (!checkIsWaystone(block.id) || !player?.isPlayer) return;
 
+  // Use proper template literals with backticks
   const posKeyTop = `${block.x},${block.y},${block.z}`;
   const posKeyBase = `${block.x},${block.y - 1},${block.z}`;
   global.waystoneOwners = JsonIO.read(file) || {};
@@ -34,7 +37,7 @@ BlockEvents.broken((event) => {
   const waystoneOwner =
     global.waystoneOwners[posKeyTop] || global.waystoneOwners[posKeyBase];
 
-  // Allows operators to vreak the waystone
+  // Allow operators to break the waystone
   if (operators.includes(player.username.toLowerCase())) return;
 
   if (waystoneOwner && waystoneOwner !== player.username.toLowerCase()) {

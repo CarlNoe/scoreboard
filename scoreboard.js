@@ -7,9 +7,6 @@ const ExcelJS = require("exceljs");
 // Legendary names filler (all variants)
 // -------------------------------------------
 const legendaryPokemonFiller = [
-  // ============================
-  // LEGENDARY (Non‑Mythical) Pokémon
-  // ============================
   // Generation I
   "Articuno",
   // Regional variants for Articuno:
