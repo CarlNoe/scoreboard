@@ -12,6 +12,7 @@ BlockEvents.placed((event) => {
   const { block, player } = event;
   if (!checkIsWarpPlate(block.id)) return;
 
+  player.tell(`§cVous detenez désormais cette waystone !`);
   const posKey = `${block.x},${block.y},${block.z}`;
   global.warpPlateOwners[posKey] = player.username.toLowerCase();
   JsonIO.write(warpPlateFile, global.warpPlateOwners);
