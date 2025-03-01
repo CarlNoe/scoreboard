@@ -154,11 +154,11 @@ function readPlayerData(namesMapping) {
         // Check if the data contains Cobbledex discovery details
         if (data.extraData?.cobbledex_discovery?.registers) {
           const registers = data.extraData.cobbledex_discovery.registers;
-          // Create a list of normalized legendary Pokemon names for comparison
+          // Create a list of normalized legendary Pokémon names for comparison
           const normalizedLegendaries = legendaryPokemonArray.map((name) =>
             name.toLowerCase()
           );
-          // Process each Pokemon entry
+          // Process each Pokémon entry
           Object.entries(registers).forEach(([pokemon, variants]) => {
             Object.values(variants).forEach((details) => {
               if (details.status === "CAUGHT") {
@@ -182,7 +182,7 @@ function readPlayerData(namesMapping) {
   return players;
 }
 
-/* ==================== Excel Leaderboard Generation ====================== */
+/* ====================== Excel Leaderboard Generation ====================== */
 
 /**
  * Generates an Excel leaderboard using a template.
@@ -259,40 +259,69 @@ async function generateExcelLeaderboard(
   console.log(`Excel leaderboard saved to ${CONFIG.leaderboard.outputExcel}`);
 }
 
-/* ============================ Main Script Flow ============================ */
+/* ====================== Leaderboard Retrieval Functions ====================== */
 
-async function main() {
-  // Step 1: Clear existing local data and download new player data.
-  clearLocalData();
-  await downloadPlayerData();
-
-  // Step 2: Load the user cache mapping (UUID -> player name).
-  const namesMapping = loadUserCacheMapping();
-  if (Object.keys(namesMapping).length === 0) {
-    console.error("User cache mapping is empty – cannot proceed.");
-    return;
-  }
-
-  // Step 3: Read player data from local JSON files.
-  const players = readPlayerData(namesMapping);
-  if (players.length === 0) {
-    console.error(`No player data found in ${FTP_CONFIG.localPath}`);
-    return;
-  }
-
-  // Step 4: Sort players by each statistic and filter out any ignored names.
+/**
+ * Retrieves and sorts players by total Pokémon caught.
+ * @param {Array} players - List of player objects.
+ * @returns {Array} Sorted list of players by caughtCount.
+ */
+export function getMostPokemonPlayers(players) {
   const mostPlayers = players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.caughtCount - a.caughtCount);
+  return mostPlayers;
+}
+
+/**
+ * Retrieves and sorts players by shiny Pokémon count.
+ * @param {Array} players - List of player objects.
+ * @returns {Array} Sorted list of players by shinyCount.
+ */
+export function getMostShinyPlayers(players) {
   const shinyPlayers = players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.shinyCount - a.shinyCount);
+  return shinyPlayers;
+}
+
+/**
+ * Retrieves and sorts players by legendary Pokémon count.
+ * @param {Array} players - List of player objects.
+ * @returns {Array} Sorted list of players by legendaryCount.
+ */
+export function getMostLegendariesPlayers(players) {
   const legendaryPlayers = players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.legendaryCount - a.legendaryCount);
-
-  // Step 5: Generate the Excel leaderboard.
-  await generateExcelLeaderboard(mostPlayers, shinyPlayers, legendaryPlayers);
+  return legendaryPlayers;
 }
 
-main();
+/* ============================ Main Script Flow ============================ */
+
+(async () => {
+  try {
+    // Optionally clear local data and download from FTP if needed:
+    // clearLocalData();
+    // await downloadPlayerData();
+
+    // Load the user cache mapping and read player data
+    const namesMapping = loadUserCacheMapping();
+    const players = readPlayerData(namesMapping);
+
+    // Ensure players is an array before proceeding
+    if (!Array.isArray(players)) {
+      throw new Error("Player data is not an array");
+    }
+
+    // Pass the players array to the leaderboard retrieval functions
+    const mostPokemon = getMostPokemonPlayers(players);
+    const mostShiny = getMostShinyPlayers(players);
+    const mostLegendaries = getMostLegendariesPlayers(players);
+
+    // Generate the Excel leaderboard
+    await generateExcelLeaderboard(mostPokemon, mostShiny, mostLegendaries);
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+})();
