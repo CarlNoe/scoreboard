@@ -1,13 +1,19 @@
 import { Client, FileType } from "basic-ftp";
-import ExcelJS from "exceljs";
 import fs from "fs";
 import path from "path";
-import { CONFIG } from "./config.js";
 import { FTP_CONFIG } from "./ftpConfig.js";
 import { legendaryPokemonArray } from "./legendaries.js";
+import puppeteer from "puppeteer";
 
-// Define the location for the user cache file and any names to ignore.
+// Define a folder for FTP downloads (player data) and a separate output folder for HTML/images.
 const USER_CACHE_FILE = path.join(FTP_CONFIG.localPath, "usercache.json");
+const OUTPUT_DIR = path.join(process.cwd(), "output");
+
+// Ensure the output directory exists.
+if (!fs.existsSync(OUTPUT_DIR)) {
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+}
+
 const ignoreNames = []; // Define names to ignore, if any
 
 /* ======================== FTP Download Functions ======================== */
@@ -182,84 +188,158 @@ function readPlayerData(namesMapping) {
   return players;
 }
 
-/* ====================== Excel Leaderboard Generation ====================== */
+/* ====================== HTML & Image Generation Functions ====================== */
 
 /**
- * Generates an Excel leaderboard using a template.
- * @param {Array} mostPlayers - Sorted array of players by caught count.
- * @param {Array} shinyPlayers - Sorted array of players by shiny count.
- * @param {Array} legendaryPlayers - Sorted array of players by legendary count.
+ * Generates an HTML string with three tables for the leaderboards.
+ * Each table has a similar structure with columns: Rank, Player Name, and the stat.
+ * @param {Array} mostPlayers - Sorted players for most Pokémon caught.
+ * @param {Array} shinyPlayers - Sorted players for most shiny Pokémon.
+ * @param {Array} legendaryPlayers - Sorted players for most legendaries.
+ * @returns {string} HTML content.
  */
-async function generateExcelLeaderboard(
+function generateHtmlContent(mostPlayers, shinyPlayers, legendaryPlayers) {
+  const mostRows = mostPlayers
+    .map(
+      (player, index) =>
+        `<tr><td>${index + 1}</td><td>${player.playerName}</td><td>${
+          player.caughtCount
+        }</td></tr>`
+    )
+    .join("");
+  const shinyRows = shinyPlayers
+    .map(
+      (player, index) =>
+        `<tr><td>${index + 1}</td><td>${player.playerName}</td><td>${
+          player.shinyCount
+        }</td></tr>`
+    )
+    .join("");
+  const legendaryRows = legendaryPlayers
+    .map(
+      (player, index) =>
+        `<tr><td>${index + 1}</td><td>${player.playerName}</td><td>${
+          player.legendaryCount
+        }</td></tr>`
+    )
+    .join("");
+
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <title>Leaderboard</title>
+  </head>
+  <body>
+    <h1>Most Pokémon Caught</h1>
+    <table id="table-most" border="1" cellspacing="0" cellpadding="5">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player Name</th>
+          <th>Caught Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${mostRows}
+      </tbody>
+    </table>
+
+    <h1>Most Shiny Pokémon</h1>
+    <table id="table-shiny" border="1" cellspacing="0" cellpadding="5">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player Name</th>
+          <th>Shiny Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${shinyRows}
+      </tbody>
+    </table>
+
+    <h1>Most Legendaries</h1>
+    <table id="table-legendaries" border="1" cellspacing="0" cellpadding="5">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Player Name</th>
+          <th>Legendary Count</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${legendaryRows}
+      </tbody>
+    </table>
+  </body>
+  </html>
+  `;
+}
+
+/**
+ * Uses Puppeteer to load the HTML file and create screenshots of each table.
+ * Each table is saved as a separate image.
+ * @param {string} htmlFilePath - Path to the HTML file.
+ */
+async function generateImagesFromHtml(htmlFilePath) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  // Use the file protocol to load the HTML file
+  await page.goto(`file://${htmlFilePath}`, { waitUntil: "networkidle0" });
+
+  const tableConfigs = [
+    {
+      id: "table-most",
+      filename: path.join(OUTPUT_DIR, "leaderboard-most.png"),
+    },
+    {
+      id: "table-shiny",
+      filename: path.join(OUTPUT_DIR, "leaderboard-shiny.png"),
+    },
+    {
+      id: "table-legendaries",
+      filename: path.join(OUTPUT_DIR, "leaderboard-legendaries.png"),
+    },
+  ];
+
+  for (const config of tableConfigs) {
+    const element = await page.$(`#${config.id}`);
+    if (element) {
+      await element.screenshot({ path: config.filename });
+      console.log(`Saved image for ${config.id} as ${config.filename}`);
+    } else {
+      console.error(`Element with id ${config.id} not found`);
+    }
+  }
+
+  await browser.close();
+}
+
+/**
+ * Generates the HTML file from the leaderboard data and then uses Puppeteer to create images.
+ * @param {Array} mostPlayers - Sorted players for most Pokémon caught.
+ * @param {Array} shinyPlayers - Sorted players for most shiny Pokémon.
+ * @param {Array} legendaryPlayers - Sorted players for most legendaries.
+ */
+async function generateHtmlAndImages(
   mostPlayers,
   shinyPlayers,
   legendaryPlayers
 ) {
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.readFile("./src/template.xlsx");
-
-  /**
-   * Writes one leaderboard section on a worksheet.
-   * @param {string} sheetName - Name of the Excel sheet.
-   * @param {Array} players - Array of players to list.
-   * @param {string} statKey - The key for the statistic to display.
-   * @param {Object} configSection - Configuration object for the leaderboard.
-   */
-  async function writeLeaderboard(sheetName, players, statKey, configSection) {
-    let sheet = workbook.getWorksheet(sheetName);
-    if (!sheet) {
-      sheet = workbook.addWorksheet(sheetName);
-    }
-
-    const rowsPerColumn = 10;
-    const maxEntries = rowsPerColumn * 4;
-    const topPlayers = players.slice(0, maxEntries);
-
-    topPlayers.forEach((player, index) => {
-      const row = (index % rowsPerColumn) + 3;
-      const colOffset = Math.floor(index / rowsPerColumn) * 3;
-      sheet.getCell(row, 2 + colOffset).value = `${index + 1}.`;
-      sheet.getCell(row, 3 + colOffset).value = player.playerName;
-      sheet.getCell(row, 4 + colOffset).value = player[statKey];
-    });
-
-    const now = new Date();
-    const updateString = `Dernière update le ${String(now.getDate()).padStart(
-      2,
-      "0"
-    )}.${String(now.getMonth() + 1).padStart(2, "0")}.${String(
-      now.getFullYear()
-    ).slice(-2)} à ${String(now.getHours()).padStart(2, "0")}:${String(
-      now.getMinutes()
-    ).padStart(2, "0")}`;
-    sheet.getCell(rowsPerColumn + 3, 2).value = updateString;
-    sheet.getCell(rowsPerColumn + 4, 2).value = configSection.subtitle;
-  }
-
-  await writeLeaderboard(
-    CONFIG.leaderboard.most.sheetName,
+  const htmlContent = generateHtmlContent(
     mostPlayers,
-    "caughtCount",
-    CONFIG.leaderboard.most
-  );
-  await writeLeaderboard(
-    CONFIG.leaderboard.shiny.sheetName,
     shinyPlayers,
-    "shinyCount",
-    CONFIG.leaderboard.shiny
+    legendaryPlayers
   );
-  await writeLeaderboard(
-    CONFIG.leaderboard.legendary.sheetName,
-    legendaryPlayers,
-    "legendaryCount",
-    CONFIG.leaderboard.legendary
-  );
-
-  await workbook.xlsx.writeFile(CONFIG.leaderboard.outputExcel);
-  console.log(`Excel leaderboard saved to ${CONFIG.leaderboard.outputExcel}`);
+  const htmlFilePath = path.join(OUTPUT_DIR, "leaderboard.html");
+  fs.writeFileSync(htmlFilePath, htmlContent, "utf8");
+  console.log(`HTML leaderboard saved to ${htmlFilePath}`);
+  await generateImagesFromHtml(htmlFilePath);
 }
 
-/* ====================== Leaderboard Retrieval Functions ====================== */
+/* ============================ Leaderboard Retrieval Functions ============================ */
 
 /**
  * Retrieves and sorts players by total Pokémon caught.
@@ -267,10 +347,9 @@ async function generateExcelLeaderboard(
  * @returns {Array} Sorted list of players by caughtCount.
  */
 export function getMostPokemonPlayers(players) {
-  const mostPlayers = players
+  return players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.caughtCount - a.caughtCount);
-  return mostPlayers;
 }
 
 /**
@@ -279,10 +358,9 @@ export function getMostPokemonPlayers(players) {
  * @returns {Array} Sorted list of players by shinyCount.
  */
 export function getMostShinyPlayers(players) {
-  const shinyPlayers = players
+  return players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.shinyCount - a.shinyCount);
-  return shinyPlayers;
 }
 
 /**
@@ -291,36 +369,30 @@ export function getMostShinyPlayers(players) {
  * @returns {Array} Sorted list of players by legendaryCount.
  */
 export function getMostLegendariesPlayers(players) {
-  const legendaryPlayers = players
+  return players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.legendaryCount - a.legendaryCount);
-  return legendaryPlayers;
 }
 
 /* ============================ Main Script Flow ============================ */
 
 (async () => {
   try {
-    // Optionally clear local data and download from FTP if needed:
-    // clearLocalData();
-    // await downloadPlayerData();
+    clearLocalData();
+    await downloadPlayerData();
 
-    // Load the user cache mapping and read player data
     const namesMapping = loadUserCacheMapping();
     const players = readPlayerData(namesMapping);
 
-    // Ensure players is an array before proceeding
-    if (!Array.isArray(players)) {
-      throw new Error("Player data is not an array");
-    }
+    if (!Array.isArray(players)) throw new Error("Player data is not an array");
 
-    // Pass the players array to the leaderboard retrieval functions
+    // Retrieve sorted leaderboards
     const mostPokemon = getMostPokemonPlayers(players);
     const mostShiny = getMostShinyPlayers(players);
     const mostLegendaries = getMostLegendariesPlayers(players);
 
-    // Generate the Excel leaderboard
-    await generateExcelLeaderboard(mostPokemon, mostShiny, mostLegendaries);
+    // Generate HTML file and create images with Puppeteer
+    await generateHtmlAndImages(mostPokemon, mostShiny, mostLegendaries);
   } catch (error) {
     console.error("An error occurred:", error);
   }
