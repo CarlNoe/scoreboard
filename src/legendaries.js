@@ -1,7 +1,4 @@
-const legendaryPokemonFiller = [
-  // ============================
-  // LEGENDARY (Non‑Mythical) Pokémon
-  // ============================
+export const legendaryPokemonArray = [
   // Generation I
   "Articuno",
   // Regional variants for Articuno:

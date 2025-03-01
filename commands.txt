@@ -1,5 +1,5 @@
-node scoreboard.js
+node src/scoreboard.js
 
-python run_excel2img.py output.xlsx leg.png "leaderboard4" "A1:N15"
-python run_excel2img.py output.xlsx most.png "leaderboard2" "A1:N15"
-python run_excel2img.py output.xlsx shiny.png "leaderboard3" "A1:N15"
+python src/run_excel2img.py output/output.xlsx output/leg.png "leaderboard4" "A1:N15"
+python src/run_excel2img.py output/output.xlsx output/most.png "leaderboard2" "A1:N15"
+python src/run_excel2img.py output/output.xlsx output/shiny.png "leaderboard3" "A1:N15"
