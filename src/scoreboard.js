@@ -301,9 +301,8 @@ export function getMostLegendariesPlayers(players) {
 
 (async () => {
   try {
-    // Optionally clear local data and download from FTP if needed:
-    // clearLocalData();
-    // await downloadPlayerData();
+    clearLocalData();
+    await downloadPlayerData();
 
     // Load the user cache mapping and read player data
     const namesMapping = loadUserCacheMapping();
