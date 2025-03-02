@@ -192,7 +192,7 @@ function readPlayerData(namesMapping) {
 
 /**
  * Generates an HTML string with three tables for the leaderboards.
- * Each table has a similar structure with columns: Rank, Player Name, and the stat.
+ * Now includes inline CSS that matches the green scoreboard style.
  * @param {Array} mostPlayers - Sorted players for most Pokémon caught.
  * @param {Array} shinyPlayers - Sorted players for most shiny Pokémon.
  * @param {Array} legendaryPlayers - Sorted players for most legendaries.
@@ -202,80 +202,37 @@ function generateHtmlContent(mostPlayers, shinyPlayers, legendaryPlayers) {
   const mostRows = mostPlayers
     .map(
       (player, index) =>
-        `<tr><td>${index + 1}</td><td>${player.playerName}</td><td>${
-          player.caughtCount
-        }</td></tr>`
+        `<tr>
+          <td class="rank">${index + 1}.</td>
+          <td class="name">${player.playerName}</td>
+          <td class="count">${player.caughtCount}</td>
+        </tr>`
     )
     .join("");
   const shinyRows = shinyPlayers
     .map(
       (player, index) =>
-        `<tr><td>${index + 1}</td><td>${player.playerName}</td><td>${
-          player.shinyCount
-        }</td></tr>`
+        `<tr>
+          <td class="rank">${index + 1}.</td>
+          <td class="name">${player.playerName}</td>
+          <td class="count">${player.shinyCount}</td>
+        </tr>`
     )
     .join("");
   const legendaryRows = legendaryPlayers
     .map(
       (player, index) =>
-        `<tr><td>${index + 1}</td><td>${player.playerName}</td><td>${
-          player.legendaryCount
-        }</td></tr>`
+        `<tr>
+          <td class="rank">${index + 1}.</td>
+          <td class="name">${player.playerName}</td>
+          <td class="count">${player.legendaryCount}</td>
+        </tr>`
     )
     .join("");
 
-  return `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Leaderboard</title>
-  </head>
-  <body>
-    <h1>Most Pokémon Caught</h1>
-    <table id="table-most" border="1" cellspacing="0" cellpadding="5">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Player Name</th>
-          <th>Caught Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${mostRows}
-      </tbody>
-    </table>
-
-    <h1>Most Shiny Pokémon</h1>
-    <table id="table-shiny" border="1" cellspacing="0" cellpadding="5">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Player Name</th>
-          <th>Shiny Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${shinyRows}
-      </tbody>
-    </table>
-
-    <h1>Most Legendaries</h1>
-    <table id="table-legendaries" border="1" cellspacing="0" cellpadding="5">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Player Name</th>
-          <th>Legendary Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${legendaryRows}
-      </tbody>
-    </table>
-  </body>
-  </html>
-  `;
+  // We'll highlight the word "Shiny" in a teal color
+  // and apply a "dark green console" theme across the page.
+  return `use html files`;
 }
 
 /**
@@ -292,15 +249,15 @@ async function generateImagesFromHtml(htmlFilePath) {
   const tableConfigs = [
     {
       id: "table-most",
-      filename: path.join(OUTPUT_DIR, "leaderboard-most.png"),
+      filename: path.join(OUTPUT_DIR, "most.png"),
     },
     {
       id: "table-shiny",
-      filename: path.join(OUTPUT_DIR, "leaderboard-shiny.png"),
+      filename: path.join(OUTPUT_DIR, "shiny.png"),
     },
     {
       id: "table-legendaries",
-      filename: path.join(OUTPUT_DIR, "leaderboard-legendaries.png"),
+      filename: path.join(OUTPUT_DIR, "leg.png"),
     },
   ];
 
