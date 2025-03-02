@@ -5,96 +5,336 @@
     <title>Most Pokémon Caught Scoreboard</title>
     <link rel="stylesheet" href="scoreboard.css" />
     <style>
-      /* Blue theme: Define column backgrounds using CSS custom properties */
+      /* Override with higher specificity to ensure these variables take precedence */
       :root {
-        --col1-bg: #05274e;
-        --col2-bg: #0c3b76;
-        --col3-bg: #144f9e;
-        --col4-bg: #1b62c4;
-        --bg-color: #ffffff; /* Page background (if needed) */
-        --text-color: #ffffff; /* Text color inside cells (if desired) */
-      }
-      /* Apply the column background colors */
-      .col-1 {
-        background-color: var(--col1-bg);
-      }
-      .col-2 {
-        background-color: var(--col2-bg);
-      }
-      .col-3 {
-        background-color: var(--col3-bg);
-      }
-      .col-4 {
-        background-color: var(--col4-bg);
+        --header-footer-bg: #05274e !important;
+        --odd-row-bg: #0c3b76 !important; /* For odd row zebra */
+        --even-row-bg: #144f9e !important; /* For even row zebra */
+        --table-bg: #1b62c4 !important; /* Overall table background */
       }
     </style>
   </head>
   <body>
     <table>
-      <thead></thead>
+      <thead>
+        <tr>
+          <th
+            colspan="4"
+            style="padding: 16px; font-size: 20px; text-align: center"
+          >
+            Qui a attrapé le plus de pokemon ?
+          </th>
+        </tr>
+      </thead>
       <tbody>
-        <!-- Each row contains 4 cells: col1 (ranks 1-10), col2 (11-20), col3 (21-30), col4 (31-40) -->
         <tr>
-          <td class="score-cell col-1 top1">1. Player 1 – 100</td>
-          <td class="score-cell col-2">11. Player 11 – 90</td>
-          <td class="score-cell col-3">21. Player 21 – 80</td>
-          <td class="score-cell col-4">31. Player 31 – 70</td>
+          <td class="score-cell top1">
+            <div class="grid-container">
+              <span>1.</span>
+              <span>Player 1</span>
+              <span>100</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>11.</span>
+              <span>Player 11</span>
+              <span>90</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>21.</span>
+              <span>Player 21</span>
+              <span>80</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>31.</span>
+              <span>Player 31</span>
+              <span>70</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1 top2">2. Player 2 – 99</td>
-          <td class="score-cell col-2">12. Player 12 – 89</td>
-          <td class="score-cell col-3">22. Player 22 – 79</td>
-          <td class="score-cell col-4">32. Player 32 – 69</td>
+          <td class="score-cell top2">
+            <div class="grid-container">
+              <span>2.</span>
+              <span>Player 2</span>
+              <span>99</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>12.</span>
+              <span>Player 12</span>
+              <span>89</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>22.</span>
+              <span>Player 22</span>
+              <span>79</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>32.</span>
+              <span>Player 32</span>
+              <span>69</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1 top3">3. Player 3 – 98</td>
-          <td class="score-cell col-2">13. Player 13 – 88</td>
-          <td class="score-cell col-3">23. Player 23 – 78</td>
-          <td class="score-cell col-4">33. Player 33 – 68</td>
+          <td class="score-cell top3">
+            <div class="grid-container">
+              <span>3.</span>
+              <span>Player 3</span>
+              <span>98</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>13.</span>
+              <span>Player 13</span>
+              <span>88</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>23.</span>
+              <span>Player 23</span>
+              <span>78</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>33.</span>
+              <span>Player 33</span>
+              <span>68</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">4. Player 4 – 97</td>
-          <td class="score-cell col-2">14. Player 14 – 87</td>
-          <td class="score-cell col-3">24. Player 24 – 77</td>
-          <td class="score-cell col-4">34. Player 34 – 67</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>4.</span>
+              <span>Player 4</span>
+              <span>97</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>14.</span>
+              <span>Player 14</span>
+              <span>87</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>24.</span>
+              <span>Player 24</span>
+              <span>77</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>34.</span>
+              <span>Player 34</span>
+              <span>67</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">5. Player 5 – 96</td>
-          <td class="score-cell col-2">15. Player 15 – 86</td>
-          <td class="score-cell col-3">25. Player 25 – 76</td>
-          <td class="score-cell col-4">35. Player 35 – 66</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>5.</span>
+              <span>Player 5</span>
+              <span>96</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>15.</span>
+              <span>Player 15</span>
+              <span>86</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>25.</span>
+              <span>Player 25</span>
+              <span>76</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>35.</span>
+              <span>Player 35</span>
+              <span>66</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">6. Player 6 – 95</td>
-          <td class="score-cell col-2">16. Player 16 – 85</td>
-          <td class="score-cell col-3">26. Player 26 – 75</td>
-          <td class="score-cell col-4">36. Player 36 – 65</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>6.</span>
+              <span>Player 6</span>
+              <span>95</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>16.</span>
+              <span>Player 16</span>
+              <span>85</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>26.</span>
+              <span>Player 26</span>
+              <span>75</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>36.</span>
+              <span>Player 36</span>
+              <span>65</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">7. Player 7 – 94</td>
-          <td class="score-cell col-2">17. Player 17 – 84</td>
-          <td class="score-cell col-3">27. Player 27 – 74</td>
-          <td class="score-cell col-4">37. Player 37 – 64</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>7.</span>
+              <span>Player 7</span>
+              <span>94</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>17.</span>
+              <span>Player 17</span>
+              <span>84</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>27.</span>
+              <span>Player 27</span>
+              <span>74</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>37.</span>
+              <span>Player 37</span>
+              <span>64</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">8. Player 8 – 93</td>
-          <td class="score-cell col-2">18. Player 18 – 83</td>
-          <td class="score-cell col-3">28. Player 28 – 73</td>
-          <td class="score-cell col-4">38. Player 38 – 63</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>8.</span>
+              <span>Player 8</span>
+              <span>93</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>18.</span>
+              <span>Player 18</span>
+              <span>83</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>28.</span>
+              <span>Player 28</span>
+              <span>73</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>38.</span>
+              <span>Player 38</span>
+              <span>63</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">9. Player 9 – 92</td>
-          <td class="score-cell col-2">19. Player 19 – 82</td>
-          <td class="score-cell col-3">29. Player 29 – 72</td>
-          <td class="score-cell col-4">39. Player 39 – 62</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>9.</span>
+              <span>Player 9</span>
+              <span>92</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>19.</span>
+              <span>Player 19</span>
+              <span>82</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>29.</span>
+              <span>Player 29</span>
+              <span>72</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>39.</span>
+              <span>Player 39</span>
+              <span>62</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">10. Player 10 – 91</td>
-          <td class="score-cell col-2">20. Player 20 – 81</td>
-          <td class="score-cell col-3">30. Player 30 – 71</td>
-          <td class="score-cell col-4">40. Player 40 – 61</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>10.</span>
+              <span>Player 10</span>
+              <span>91</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>20.</span>
+              <span>Player 20</span>
+              <span>81</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>30.</span>
+              <span>Player 30</span>
+              <span>71</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>40.</span>
+              <span>Player 40</span>
+              <span>61</span>
+            </div>
+          </td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" style="padding: 12px; text-align: center">
+            Dernière update le X
+          </td>
+        </tr>
+      </tfoot>
     </table>
   </body>
 </html>

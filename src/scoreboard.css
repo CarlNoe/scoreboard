@@ -1,6 +1,9 @@
 :root {
-  /* Default values (can be overridden in each HTML file) */
-  --text-color: #ffffff;
+  --header-footer-bg: #15ff00;
+  --odd-row-bg: #d500bc; /* For odd row zebra */
+  --even-row-bg: #c1e427; /* For even row zebra */
+  --table-bg: #312825; /* Overall table background */
+  --text-color: white; /* Added text color variable */
 }
 
 /* Global styles */
@@ -8,24 +11,45 @@ body {
   margin: 0;
   padding: 0;
   font-family: Roboto, monospace;
+  font-size: 16px;
   text-align: center;
+  color: var(--text-color);
 }
 
-/* Table styling */
 table {
+  width: 1200px;
   margin: 0 auto;
   border-collapse: collapse;
-  background-color: #e8a203;
-  padding: 8px;
+  background-color: var(--table-bg);
+}
+
+thead,
+tfoot {
+  background-color: var(--header-footer-bg);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--odd-row-bg);
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--even-row-bg);
 }
 
 .score-cell {
-  width: 300px; /* 300px wide */
-  font-size: 16px; /* 16px font-size */
-  padding: 8px; /* 8px padding */
-  color: var(--text-color);
-  border: 1px solid var(--text-color);
-  text-align: left;
+  width: 25%; /* Set width to 25% for 4 equal columns */
+  font-size: 16px;
+  /* display: grid;
+  grid-template-columns: 40px 1fr 40px; */
+  align-items: center;
+  gap: 5px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 40px 1fr 60px;
+  padding: 8px;
+  align-items: center;
 }
 
 /* Top rank overrides */
@@ -39,4 +63,10 @@ table {
 
 .top3 {
   background-color: #7b3d00 !important; /* Top 3 color */
+}
+
+.top1,
+.top2,
+.top3 {
+  font-weight: bold;
 }

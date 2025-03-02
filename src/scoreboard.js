@@ -191,109 +191,239 @@ function readPlayerData(namesMapping) {
 /* ====================== HTML & Image Generation Functions ====================== */
 
 /**
- * Generates an HTML string with three tables for the leaderboards.
- * Now includes inline CSS that matches the green scoreboard style.
- * @param {Array} mostPlayers - Sorted players for most Pokémon caught.
- * @param {Array} shinyPlayers - Sorted players for most shiny Pokémon.
- * @param {Array} legendaryPlayers - Sorted players for most legendaries.
+ * Generates an HTML string with player data for the scoreboard.
+ * Uses the existing scoreboard HTML structure from the template.
+ * @param {Array} players - Sorted player data array.
+ * @param {string} title - Title for the scoreboard.
+ * @param {string} scoreProperty - Property name to display (caughtCount, shinyCount, or legendaryCount).
+ * @param {string} tableId - ID to assign to the table element.
  * @returns {string} HTML content.
  */
-function generateHtmlContent(mostPlayers, shinyPlayers, legendaryPlayers) {
-  const mostRows = mostPlayers
-    .map(
-      (player, index) =>
-        `<tr>
-          <td class="rank">${index + 1}.</td>
-          <td class="name">${player.playerName}</td>
-          <td class="count">${player.caughtCount}</td>
-        </tr>`
-    )
-    .join("");
-  const shinyRows = shinyPlayers
-    .map(
-      (player, index) =>
-        `<tr>
-          <td class="rank">${index + 1}.</td>
-          <td class="name">${player.playerName}</td>
-          <td class="count">${player.shinyCount}</td>
-        </tr>`
-    )
-    .join("");
-  const legendaryRows = legendaryPlayers
-    .map(
-      (player, index) =>
-        `<tr>
-          <td class="rank">${index + 1}.</td>
-          <td class="name">${player.playerName}</td>
-          <td class="count">${player.legendaryCount}</td>
-        </tr>`
-    )
-    .join("");
+function generateScoreboardHtml(players, title, scoreProperty, tableId) {
+  // Limit to 40 players maximum (10 rows and 4 columns)
+  const topPlayers = players.slice(0, 40);
+  const rows = 10;
+  const columns = 4;
 
-  // We'll highlight the word "Shiny" in a teal color
-  // and apply a "dark green console" theme across the page.
-  return `use html files`;
+  let tbodyContent = "";
+
+  // Use column-major order: for each row, iterate over each column
+  for (let row = 0; row < rows; row++) {
+    tbodyContent += "<tr>";
+    for (let col = 0; col < columns; col++) {
+      const playerIndex = col * rows + row;
+      const player =
+        playerIndex < topPlayers.length ? topPlayers[playerIndex] : null;
+      const rank = playerIndex + 1;
+      const topClass = rank <= 3 ? `top${rank}` : "";
+
+      if (player) {
+        tbodyContent += `
+          <td class="score-cell ${topClass}">
+            <div class="grid-container">
+              <span>${rank}.</span>
+              <span>${player.playerName}</span>
+              <span>${player[scoreProperty]}</span>
+            </div>
+          </td>`;
+      } else {
+        // Empty cell if we don't have enough players
+        tbodyContent += `
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>${rank}.</span>
+              <span>-</span>
+              <span>0</span>
+            </div>
+          </td>`;
+      }
+    }
+    tbodyContent += "</tr>";
+  }
+
+  // Format the current date and time using French locale
+  const now = new Date();
+  const dateString = now.toLocaleDateString("fr-FR"); // e.g., "31/03/2025"
+  const timeString = now.toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }); // e.g., "14:30"
+
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>${title}</title>
+    <style>
+      :root {
+        --header-footer-bg: #15ff00;
+        --odd-row-bg: #d500bc; /* For odd row zebra */
+        --even-row-bg: #c1e427; /* For even row zebra */
+        --table-bg: #312825; /* Overall table background */
+        --text-color: white;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Roboto, monospace;
+        font-size: 16px;
+        text-align: center;
+        color: var(--text-color);
+      }
+      table {
+        width: 1200px;
+        margin: 0 auto;
+        border-collapse: collapse;
+        background-color: var(--table-bg);
+      }
+      thead,
+      tfoot {
+        background-color: var(--header-footer-bg);
+      }
+      tbody tr:nth-child(odd) {
+        background-color: var(--odd-row-bg);
+      }
+      tbody tr:nth-child(even) {
+        background-color: var(--even-row-bg);
+      }
+      .score-cell {
+        width: 25%;
+        font-size: 16px;
+        align-items: center;
+        gap: 5px;
+      }
+      .grid-container {
+        display: grid;
+        grid-template-columns: 40px 1fr 60px;
+        padding: 8px;
+        align-items: center;
+      }
+      /* Top rank overrides */
+      .top1 {
+        background-color: #e8a203 !important;
+      }
+      .top2 {
+        background-color: #808080 !important;
+      }
+      .top3 {
+        background-color: #7b3d00 !important;
+      }
+      .top1,
+      .top2,
+      .top3 {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="${tableId}">
+      <thead>
+        <tr>
+          <th colspan="4" style="padding: 16px; font-size: 20px; text-align: center">
+            ${title}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tbodyContent}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" style="padding: 12px; text-align: center">
+            Dernière update le ${dateString} à ${timeString}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </body>
+</html>`;
 }
 
 /**
- * Uses Puppeteer to load the HTML file and create screenshots of each table.
- * Each table is saved as a separate image.
+ * Uses Puppeteer to create a screenshot of just the table element.
  * @param {string} htmlFilePath - Path to the HTML file.
+ * @param {string} tableId - The ID of the table element to screenshot.
+ * @param {string} outputImagePath - Path where the image will be saved.
  */
-async function generateImagesFromHtml(htmlFilePath) {
+async function generateTableScreenshot(htmlFilePath, tableId, outputImagePath) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
+
   // Use the file protocol to load the HTML file
   await page.goto(`file://${htmlFilePath}`, { waitUntil: "networkidle0" });
 
-  const tableConfigs = [
-    {
-      id: "table-most",
-      filename: path.join(OUTPUT_DIR, "most.png"),
-    },
-    {
-      id: "table-shiny",
-      filename: path.join(OUTPUT_DIR, "shiny.png"),
-    },
-    {
-      id: "table-legendaries",
-      filename: path.join(OUTPUT_DIR, "leg.png"),
-    },
-  ];
+  // Find the table element by ID
+  const tableElement = await page.$(`#${tableId}`);
 
-  for (const config of tableConfigs) {
-    const element = await page.$(`#${config.id}`);
-    if (element) {
-      await element.screenshot({ path: config.filename });
-      console.log(`Saved image for ${config.id} as ${config.filename}`);
-    } else {
-      console.error(`Element with id ${config.id} not found`);
-    }
+  if (tableElement) {
+    // Take a screenshot of just the table element
+    await tableElement.screenshot({ path: outputImagePath });
+    console.log(`Saved table image to ${outputImagePath}`);
+  } else {
+    console.error(`Table element with ID "${tableId}" not found`);
   }
 
   await browser.close();
 }
 
 /**
- * Generates the HTML file from the leaderboard data and then uses Puppeteer to create images.
+ * Generates the scoreboard HTMLs and images for each leaderboard category.
  * @param {Array} mostPlayers - Sorted players for most Pokémon caught.
  * @param {Array} shinyPlayers - Sorted players for most shiny Pokémon.
  * @param {Array} legendaryPlayers - Sorted players for most legendaries.
  */
-async function generateHtmlAndImages(
+async function generateScoreboards(
   mostPlayers,
   shinyPlayers,
   legendaryPlayers
 ) {
-  const htmlContent = generateHtmlContent(
-    mostPlayers,
-    shinyPlayers,
-    legendaryPlayers
-  );
-  const htmlFilePath = path.join(OUTPUT_DIR, "leaderboard.html");
-  fs.writeFileSync(htmlFilePath, htmlContent, "utf8");
-  console.log(`HTML leaderboard saved to ${htmlFilePath}`);
-  await generateImagesFromHtml(htmlFilePath);
+  const scoreboards = [
+    {
+      title: "Qui a attrapé le plus de pokemon ?",
+      players: mostPlayers,
+      property: "caughtCount",
+      tableId: "table-most",
+      htmlFile: path.join(OUTPUT_DIR, "most-pokemon.html"),
+      imageFile: path.join(OUTPUT_DIR, "most.png"),
+    },
+    {
+      title: "Qui a attrapé le plus de shiny ?",
+      players: shinyPlayers,
+      property: "shinyCount",
+      tableId: "table-shiny",
+      htmlFile: path.join(OUTPUT_DIR, "most-shiny.html"),
+      imageFile: path.join(OUTPUT_DIR, "shiny.png"),
+    },
+    {
+      title: "Qui a attrapé le plus de légendaires ?",
+      players: legendaryPlayers,
+      property: "legendaryCount",
+      tableId: "table-legendaries",
+      htmlFile: path.join(OUTPUT_DIR, "most-legendary.html"),
+      imageFile: path.join(OUTPUT_DIR, "leg.png"),
+    },
+  ];
+
+  for (const scoreboard of scoreboards) {
+    // Generate the HTML for this scoreboard
+    const html = generateScoreboardHtml(
+      scoreboard.players,
+      scoreboard.title,
+      scoreboard.property,
+      scoreboard.tableId
+    );
+
+    // Save the HTML file
+    fs.writeFileSync(scoreboard.htmlFile, html, "utf8");
+    console.log(`HTML scoreboard saved to ${scoreboard.htmlFile}`);
+
+    // Generate the table screenshot from the HTML
+    await generateTableScreenshot(
+      scoreboard.htmlFile,
+      scoreboard.tableId,
+      scoreboard.imageFile
+    );
+  }
 }
 
 /* ============================ Leaderboard Retrieval Functions ============================ */
@@ -348,8 +478,8 @@ export function getMostLegendariesPlayers(players) {
     const mostShiny = getMostShinyPlayers(players);
     const mostLegendaries = getMostLegendariesPlayers(players);
 
-    // Generate HTML file and create images with Puppeteer
-    await generateHtmlAndImages(mostPokemon, mostShiny, mostLegendaries);
+    // Generate HTML files and create images with Puppeteer
+    await generateScoreboards(mostPokemon, mostShiny, mostLegendaries);
   } catch (error) {
     console.error("An error occurred:", error);
   }
