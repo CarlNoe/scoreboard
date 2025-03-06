@@ -1,13 +1,19 @@
 import { Client, FileType } from "basic-ftp";
-import ExcelJS from "exceljs";
 import fs from "fs";
 import path from "path";
-import { CONFIG } from "./config.js";
 import { FTP_CONFIG } from "./ftpConfig.js";
 import { legendaryPokemonArray } from "./legendaries.js";
+import puppeteer from "puppeteer";
 
-// Define the location for the user cache file and any names to ignore.
+// Define a folder for FTP downloads (player data) and a separate output folder for HTML/images.
 const USER_CACHE_FILE = path.join(FTP_CONFIG.localPath, "usercache.json");
+const OUTPUT_DIR = path.join(process.cwd(), "output");
+
+// Ensure the output directory exists.
+if (!fs.existsSync(OUTPUT_DIR)) {
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+}
+
 const ignoreNames = []; // Define names to ignore, if any
 
 /* ======================== FTP Download Functions ======================== */
@@ -182,84 +188,185 @@ function readPlayerData(namesMapping) {
   return players;
 }
 
-/* ====================== Excel Leaderboard Generation ====================== */
+/* ====================== HTML & Image Generation Functions ====================== */
 
 /**
- * Generates an Excel leaderboard using a template.
- * @param {Array} mostPlayers - Sorted array of players by caught count.
- * @param {Array} shinyPlayers - Sorted array of players by shiny count.
- * @param {Array} legendaryPlayers - Sorted array of players by legendary count.
+ * Generates an HTML string with player data for the scoreboard using a template file.
+ * @param {Array} players - Sorted player data array.
+ * @param {string} title - Title for the scoreboard.
+ * @param {string} scoreProperty - Property name to display (caughtCount, shinyCount, or legendaryCount).
+ * @param {string} tableId - ID to assign to the table element.
+ * @param {string} templateFile - Path to the HTML template file.
+ * @returns {string} HTML content.
  */
-async function generateExcelLeaderboard(
+function generateScoreboardHtml(
+  players,
+  title,
+  scoreProperty,
+  tableId,
+  templateFile
+) {
+  // Read the template file
+  let templateHtml = fs.readFileSync(templateFile, "utf8");
+
+  // Limit to 40 players maximum (10 rows and 4 columns)
+  const topPlayers = players.slice(0, 40);
+  const rows = 10;
+  const columns = 4;
+
+  let tbodyContent = "";
+
+  // Use column-major order: for each row, iterate over each column
+  for (let row = 0; row < rows; row++) {
+    tbodyContent += "<tr>";
+    for (let col = 0; col < columns; col++) {
+      const playerIndex = col * rows + row;
+      const player =
+        playerIndex < topPlayers.length ? topPlayers[playerIndex] : null;
+      const rank = playerIndex + 1;
+      const topClass = rank <= 3 ? `top${rank}` : "";
+
+      if (player) {
+        tbodyContent += `
+          <td class="score-cell ${topClass}">
+            <div class="grid-container">
+              <span>${rank}.</span>
+              <span>${player.playerName}</span>
+              <span>${player[scoreProperty]}</span>
+            </div>
+          </td>`;
+      } else {
+        // Empty cell if we don't have enough players
+        tbodyContent += `
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>${rank}.</span>
+              <span>-</span>
+              <span>0</span>
+            </div>
+          </td>`;
+      }
+    }
+    tbodyContent += "</tr>";
+  }
+
+  // Format the current date and time using French locale
+  const now = new Date();
+  const dateString = now.toLocaleDateString("fr-FR");
+  const timeString = now.toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  // Replace placeholders in the template
+  templateHtml = templateHtml.replace(/(<table[^>]*)>/, `$1 id="${tableId}">`); // Add table ID
+  templateHtml = templateHtml.replace(
+    /<th[^>]*>.*?<\/th>/,
+    `<th colspan="4" style="padding: 16px; font-size: 20px; text-align: center">${title}</th>`
+  ); // Replace title
+  templateHtml = templateHtml.replace(
+    /<!-- <tbody>[\s\S]*?<\/tbody> -->/,
+    `<tbody>${tbodyContent}</tbody>`
+  ); // Replace tbody
+  templateHtml = templateHtml.replace(
+    /Dernière update le X/,
+    `Dernière update le ${dateString} à ${timeString}`
+  ); // Replace date
+
+  return templateHtml;
+}
+
+/**
+ * Uses Puppeteer to create a screenshot of just the table element.
+ * @param {string} htmlFilePath - Path to the HTML file.
+ * @param {string} tableId - The ID of the table element to screenshot.
+ * @param {string} outputImagePath - Path where the image will be saved.
+ */
+async function generateTableScreenshot(htmlFilePath, tableId, outputImagePath) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+
+  // Use the file protocol to load the HTML file
+  await page.goto(`file://${htmlFilePath}`, { waitUntil: "networkidle0" });
+
+  // Find the table element by ID
+  const tableElement = await page.$(`#${tableId}`);
+
+  if (tableElement) {
+    // Take a screenshot of just the table element
+    await tableElement.screenshot({ path: outputImagePath });
+    console.log(`Saved table image to ${outputImagePath}`);
+  } else {
+    console.error(`Table element with ID "${tableId}" not found`);
+  }
+
+  await browser.close();
+}
+
+/**
+ * Generates the scoreboard HTMLs and images for each leaderboard category.
+ * @param {Array} mostPlayers - Sorted players for most Pokémon caught.
+ * @param {Array} shinyPlayers - Sorted players for most shiny Pokémon.
+ * @param {Array} legendaryPlayers - Sorted players for most legendaries.
+ */
+async function generateScoreboards(
   mostPlayers,
   shinyPlayers,
   legendaryPlayers
 ) {
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.readFile("./src/template.xlsx");
+  const scoreboards = [
+    {
+      title: "Qui a attrapé le plus de pokemon ?",
+      players: mostPlayers,
+      property: "caughtCount",
+      tableId: "table-most",
+      templateFile: path.join(process.cwd(), "./src/mostScoreboard.html"),
+      htmlFile: path.join(OUTPUT_DIR, "most-pokemon.html"),
+      imageFile: path.join(OUTPUT_DIR, "most.png"),
+    },
+    {
+      title: "Qui a attrapé le plus de shiny ?",
+      players: shinyPlayers,
+      property: "shinyCount",
+      tableId: "table-shiny",
+      templateFile: path.join(process.cwd(), "./src/shinyScoreboard.html"),
+      htmlFile: path.join(OUTPUT_DIR, "most-shiny.html"),
+      imageFile: path.join(OUTPUT_DIR, "shiny.png"),
+    },
+    {
+      title: "Qui a attrapé le plus de légendaires ?",
+      players: legendaryPlayers,
+      property: "legendaryCount",
+      tableId: "table-legendaries",
+      templateFile: path.join(process.cwd(), "./src/legendaryScoreboard.html"),
+      htmlFile: path.join(OUTPUT_DIR, "most-legendary.html"),
+      imageFile: path.join(OUTPUT_DIR, "leg.png"),
+    },
+  ];
 
-  /**
-   * Writes one leaderboard section on a worksheet.
-   * @param {string} sheetName - Name of the Excel sheet.
-   * @param {Array} players - Array of players to list.
-   * @param {string} statKey - The key for the statistic to display.
-   * @param {Object} configSection - Configuration object for the leaderboard.
-   */
-  async function writeLeaderboard(sheetName, players, statKey, configSection) {
-    let sheet = workbook.getWorksheet(sheetName);
-    if (!sheet) {
-      sheet = workbook.addWorksheet(sheetName);
-    }
+  for (const scoreboard of scoreboards) {
+    // Generate the HTML for this scoreboard using the template
+    const html = generateScoreboardHtml(
+      scoreboard.players,
+      scoreboard.title,
+      scoreboard.property,
+      scoreboard.tableId,
+      scoreboard.templateFile
+    );
 
-    const rowsPerColumn = 10;
-    const maxEntries = rowsPerColumn * 4;
-    const topPlayers = players.slice(0, maxEntries);
+    // Save the HTML file
+    fs.writeFileSync(scoreboard.htmlFile, html, "utf8");
+    console.log(`HTML scoreboard saved to ${scoreboard.htmlFile}`);
 
-    topPlayers.forEach((player, index) => {
-      const row = (index % rowsPerColumn) + 3;
-      const colOffset = Math.floor(index / rowsPerColumn) * 3;
-      sheet.getCell(row, 2 + colOffset).value = `${index + 1}.`;
-      sheet.getCell(row, 3 + colOffset).value = player.playerName;
-      sheet.getCell(row, 4 + colOffset).value = player[statKey];
-    });
-
-    const now = new Date();
-    const updateString = `Dernière update le ${String(now.getDate()).padStart(
-      2,
-      "0"
-    )}.${String(now.getMonth() + 1).padStart(2, "0")}.${String(
-      now.getFullYear()
-    ).slice(-2)} à ${String(now.getHours()).padStart(2, "0")}:${String(
-      now.getMinutes()
-    ).padStart(2, "0")}`;
-    sheet.getCell(rowsPerColumn + 3, 2).value = updateString;
-    sheet.getCell(rowsPerColumn + 4, 2).value = configSection.subtitle;
+    // Generate the table screenshot from the HTML
+    await generateTableScreenshot(
+      scoreboard.htmlFile,
+      scoreboard.tableId,
+      scoreboard.imageFile
+    );
   }
-
-  await writeLeaderboard(
-    CONFIG.leaderboard.most.sheetName,
-    mostPlayers,
-    "caughtCount",
-    CONFIG.leaderboard.most
-  );
-  await writeLeaderboard(
-    CONFIG.leaderboard.shiny.sheetName,
-    shinyPlayers,
-    "shinyCount",
-    CONFIG.leaderboard.shiny
-  );
-  await writeLeaderboard(
-    CONFIG.leaderboard.legendary.sheetName,
-    legendaryPlayers,
-    "legendaryCount",
-    CONFIG.leaderboard.legendary
-  );
-
-  await workbook.xlsx.writeFile(CONFIG.leaderboard.outputExcel);
-  console.log(`Excel leaderboard saved to ${CONFIG.leaderboard.outputExcel}`);
 }
-
-/* ====================== Leaderboard Retrieval Functions ====================== */
+/* ============================ Leaderboard Retrieval Functions ============================ */
 
 /**
  * Retrieves and sorts players by total Pokémon caught.
@@ -267,10 +374,9 @@ async function generateExcelLeaderboard(
  * @returns {Array} Sorted list of players by caughtCount.
  */
 export function getMostPokemonPlayers(players) {
-  const mostPlayers = players
+  return players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.caughtCount - a.caughtCount);
-  return mostPlayers;
 }
 
 /**
@@ -279,10 +385,9 @@ export function getMostPokemonPlayers(players) {
  * @returns {Array} Sorted list of players by shinyCount.
  */
 export function getMostShinyPlayers(players) {
-  const shinyPlayers = players
+  return players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.shinyCount - a.shinyCount);
-  return shinyPlayers;
 }
 
 /**
@@ -291,10 +396,9 @@ export function getMostShinyPlayers(players) {
  * @returns {Array} Sorted list of players by legendaryCount.
  */
 export function getMostLegendariesPlayers(players) {
-  const legendaryPlayers = players
+  return players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.legendaryCount - a.legendaryCount);
-  return legendaryPlayers;
 }
 
 /* ============================ Main Script Flow ============================ */
@@ -304,22 +408,18 @@ export function getMostLegendariesPlayers(players) {
     clearLocalData();
     await downloadPlayerData();
 
-    // Load the user cache mapping and read player data
     const namesMapping = loadUserCacheMapping();
     const players = readPlayerData(namesMapping);
 
-    // Ensure players is an array before proceeding
-    if (!Array.isArray(players)) {
-      throw new Error("Player data is not an array");
-    }
+    if (!Array.isArray(players)) throw new Error("Player data is not an array");
 
-    // Pass the players array to the leaderboard retrieval functions
+    // Retrieve sorted leaderboards
     const mostPokemon = getMostPokemonPlayers(players);
     const mostShiny = getMostShinyPlayers(players);
     const mostLegendaries = getMostLegendariesPlayers(players);
 
-    // Generate the Excel leaderboard
-    await generateExcelLeaderboard(mostPokemon, mostShiny, mostLegendaries);
+    // Generate HTML files and create images with Puppeteer
+    await generateScoreboards(mostPokemon, mostShiny, mostLegendaries);
   } catch (error) {
     console.error("An error occurred:", error);
   }
