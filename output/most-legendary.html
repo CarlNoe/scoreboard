@@ -3,70 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <title>Qui a attrapé le plus de légendaires ?</title>
-       <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="scoreboard.css" />
     <style>
       :root {
-        --header-footer-bg: #15ff00;
-        --odd-row-bg: #d500bc; /* For odd row zebra */
-        --even-row-bg: #c1e427; /* For even row zebra */
-        --table-bg: #312825; /* Overall table background */
-        --text-color: white;
-      }
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: Poppins, monospace;
-        font-size: 16px;
-        text-align: center;
-        color: var(--text-color);
-      }
-      table {
-        width: 1200px;
-        margin: 0 auto;
-        border-collapse: collapse;
-        background-color: var(--table-bg);
-      }
-      thead,
-      tfoot {
-        background-color: var(--header-footer-bg);
-      }
-      tbody tr:nth-child(odd) {
-        background-color: var(--odd-row-bg);
-      }
-      tbody tr:nth-child(even) {
-        background-color: var(--even-row-bg);
-      }
-      .score-cell {
-        width: 25%;
-        font-size: 16px;
-        align-items: center;
-        gap: 5px;
-      }
-      .grid-container {
-        display: grid;
-        grid-template-columns: 40px 1fr 60px;
-        padding: 8px;
-        align-items: center;
-      }
-      /* Top rank overrides */
-      .top1 {
-        background-color: #e8a203 !important;
-      }
-      .top2 {
-        background-color: #808080 !important;
-      }
-      .top3 {
-        background-color: #7b3d00 !important;
-      }
-      .top1,
-      .top2,
-      .top3 {
-        font-weight: bold;
+        --header-footer-bg: #b04604 !important;
+        --odd-row-bg: #fc9933 !important; /* For odd row zebra */
+        --even-row-bg: #fdcc66 !important; /* For even row zebra */
+        --table-bg: #fc650b !important; /* Overall table background */
       }
     </style>
   </head>
@@ -74,18 +23,20 @@
     <table id="table-legendaries">
       <thead>
         <tr>
-          <th colspan="4" style="padding: 16px; font-size: 20px; text-align: center">
+          <th
+            colspan="4"
+            style="padding: 16px; font-size: 20px; text-align: center"
+          >
             Qui a attrapé le plus de légendaires ?
           </th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
+      <tbody><tr>
           <td class="score-cell top1">
             <div class="grid-container">
               <span>1.</span>
               <span>Otachisaburi</span>
-              <span>81</span>
+              <span>92</span>
             </div>
           </td>
           <td class="score-cell ">
@@ -105,8 +56,8 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>31.</span>
-              <span>joueurwooki</span>
-              <span>7</span>
+              <span>RazerHus</span>
+              <span>8</span>
             </div>
           </td></tr><tr>
           <td class="score-cell top2">
@@ -119,7 +70,7 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>12.</span>
-              <span>Freeze_zaeyo_</span>
+              <span>Methyril</span>
               <span>24</span>
             </div>
           </td>
@@ -141,21 +92,21 @@
             <div class="grid-container">
               <span>3.</span>
               <span>HeatleoDuster</span>
-              <span>43</span>
+              <span>44</span>
             </div>
           </td>
           <td class="score-cell ">
             <div class="grid-container">
               <span>13.</span>
-              <span>Methyril</span>
-              <span>23</span>
+              <span>Freeze_zaeyo_</span>
+              <span>24</span>
             </div>
           </td>
           <td class="score-cell ">
             <div class="grid-container">
               <span>23.</span>
-              <span>Noiartam</span>
-              <span>10</span>
+              <span>joueurwooki</span>
+              <span>12</span>
             </div>
           </td>
           <td class="score-cell ">
@@ -168,8 +119,8 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>4.</span>
-              <span>Azufinn</span>
-              <span>38</span>
+              <span>Lookoomcitron</span>
+              <span>39</span>
             </div>
           </td>
           <td class="score-cell ">
@@ -182,8 +133,8 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>24.</span>
-              <span>Lenny_san</span>
-              <span>9</span>
+              <span>Noiartam</span>
+              <span>10</span>
             </div>
           </td>
           <td class="score-cell ">
@@ -196,8 +147,8 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>5.</span>
-              <span>Lookoomcitron</span>
-              <span>35</span>
+              <span>Azufinn</span>
+              <span>38</span>
             </div>
           </td>
           <td class="score-cell ">
@@ -210,7 +161,7 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>25.</span>
-              <span>De_Oceane</span>
+              <span>Lenny_san</span>
               <span>9</span>
             </div>
           </td>
@@ -224,21 +175,21 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>6.</span>
-              <span>Lutjio</span>
-              <span>33</span>
+              <span>bspkrs_</span>
+              <span>34</span>
             </div>
           </td>
           <td class="score-cell ">
             <div class="grid-container">
               <span>16.</span>
-              <span>Thomsondu45</span>
+              <span>ShinLeGoat</span>
               <span>17</span>
             </div>
           </td>
           <td class="score-cell ">
             <div class="grid-container">
               <span>26.</span>
-              <span>Elestiano</span>
+              <span>De_Oceane</span>
               <span>9</span>
             </div>
           </td>
@@ -252,22 +203,22 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>7.</span>
-              <span>Eniox_0</span>
-              <span>30</span>
+              <span>Lutjio</span>
+              <span>33</span>
             </div>
           </td>
           <td class="score-cell ">
             <div class="grid-container">
               <span>17.</span>
-              <span>Banamas_</span>
-              <span>16</span>
+              <span>Thomsondu45</span>
+              <span>17</span>
             </div>
           </td>
           <td class="score-cell ">
             <div class="grid-container">
               <span>27.</span>
-              <span>Bazouho</span>
-              <span>8</span>
+              <span>Elestiano</span>
+              <span>9</span>
             </div>
           </td>
           <td class="score-cell ">
@@ -280,21 +231,21 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>8.</span>
-              <span>bspkrs_</span>
-              <span>29</span>
+              <span>Eniox_0</span>
+              <span>30</span>
             </div>
           </td>
           <td class="score-cell ">
             <div class="grid-container">
               <span>18.</span>
-              <span>ShinLeGoat</span>
+              <span>Banamas_</span>
               <span>16</span>
             </div>
           </td>
           <td class="score-cell ">
             <div class="grid-container">
               <span>28.</span>
-              <span>PyroxX59</span>
+              <span>Bazouho</span>
               <span>8</span>
             </div>
           </td>
@@ -308,8 +259,8 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>9.</span>
-              <span>Odhyn</span>
-              <span>28</span>
+              <span>Zelderos</span>
+              <span>29</span>
             </div>
           </td>
           <td class="score-cell ">
@@ -322,7 +273,7 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>29.</span>
-              <span>azrox2903</span>
+              <span>PyroxX59</span>
               <span>8</span>
             </div>
           </td>
@@ -336,8 +287,8 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>10.</span>
-              <span>Zelderos</span>
-              <span>27</span>
+              <span>Odhyn</span>
+              <span>28</span>
             </div>
           </td>
           <td class="score-cell ">
@@ -350,7 +301,7 @@
           <td class="score-cell ">
             <div class="grid-container">
               <span>30.</span>
-              <span>RazerHus</span>
+              <span>azrox2903</span>
               <span>8</span>
             </div>
           </td>
@@ -360,12 +311,11 @@
               <span>SyKape</span>
               <span>3</span>
             </div>
-          </td></tr>
-      </tbody>
+          </td></tr></tbody>
       <tfoot>
         <tr>
           <td colspan="4" style="padding: 12px; text-align: center">
-            Dernière update le 05/03/2025 à 22:45
+            Dernière update le 06/03/2025 à 08:24
           </td>
         </tr>
       </tfoot>

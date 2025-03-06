@@ -191,15 +191,24 @@ function readPlayerData(namesMapping) {
 /* ====================== HTML & Image Generation Functions ====================== */
 
 /**
- * Generates an HTML string with player data for the scoreboard.
- * Uses the existing scoreboard HTML structure from the template.
+ * Generates an HTML string with player data for the scoreboard using a template file.
  * @param {Array} players - Sorted player data array.
  * @param {string} title - Title for the scoreboard.
  * @param {string} scoreProperty - Property name to display (caughtCount, shinyCount, or legendaryCount).
  * @param {string} tableId - ID to assign to the table element.
+ * @param {string} templateFile - Path to the HTML template file.
  * @returns {string} HTML content.
  */
-function generateScoreboardHtml(players, title, scoreProperty, tableId) {
+function generateScoreboardHtml(
+  players,
+  title,
+  scoreProperty,
+  tableId,
+  templateFile
+) {
+  // Read the template file
+  let templateHtml = fs.readFileSync(templateFile, "utf8");
+
   // Limit to 40 players maximum (10 rows and 4 columns)
   const topPlayers = players.slice(0, 40);
   const rows = 10;
@@ -243,106 +252,28 @@ function generateScoreboardHtml(players, title, scoreProperty, tableId) {
 
   // Format the current date and time using French locale
   const now = new Date();
-  const dateString = now.toLocaleDateString("fr-FR"); // e.g., "31/03/2025"
+  const dateString = now.toLocaleDateString("fr-FR");
   const timeString = now.toLocaleTimeString("fr-FR", {
     hour: "2-digit",
     minute: "2-digit",
-  }); // e.g., "14:30"
+  });
 
-  return `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>${title}</title>
-       <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --header-footer-bg: #15ff00;
-        --odd-row-bg: #d500bc; /* For odd row zebra */
-        --even-row-bg: #c1e427; /* For even row zebra */
-        --table-bg: #312825; /* Overall table background */
-        --text-color: white;
-      }
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: Poppins, monospace;
-        font-size: 16px;
-        text-align: center;
-        color: var(--text-color);
-      }
-      table {
-        width: 1200px;
-        margin: 0 auto;
-        border-collapse: collapse;
-        background-color: var(--table-bg);
-      }
-      thead,
-      tfoot {
-        background-color: var(--header-footer-bg);
-      }
-      tbody tr:nth-child(odd) {
-        background-color: var(--odd-row-bg);
-      }
-      tbody tr:nth-child(even) {
-        background-color: var(--even-row-bg);
-      }
-      .score-cell {
-        width: 25%;
-        font-size: 16px;
-        align-items: center;
-        gap: 5px;
-      }
-      .grid-container {
-        display: grid;
-        grid-template-columns: 40px 1fr 60px;
-        padding: 8px;
-        align-items: center;
-      }
-      /* Top rank overrides */
-      .top1 {
-        background-color: #e8a203 !important;
-      }
-      .top2 {
-        background-color: #808080 !important;
-      }
-      .top3 {
-        background-color: #7b3d00 !important;
-      }
-      .top1,
-      .top2,
-      .top3 {
-        font-weight: bold;
-      }
-    </style>
-  </head>
-  <body>
-    <table id="${tableId}">
-      <thead>
-        <tr>
-          <th colspan="4" style="padding: 16px; font-size: 20px; text-align: center">
-            ${title}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        ${tbodyContent}
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="4" style="padding: 12px; text-align: center">
-            Dernière update le ${dateString} à ${timeString}
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-  </body>
-</html>`;
+  // Replace placeholders in the template
+  templateHtml = templateHtml.replace(/(<table[^>]*)>/, `$1 id="${tableId}">`); // Add table ID
+  templateHtml = templateHtml.replace(
+    /<th[^>]*>.*?<\/th>/,
+    `<th colspan="4" style="padding: 16px; font-size: 20px; text-align: center">${title}</th>`
+  ); // Replace title
+  templateHtml = templateHtml.replace(
+    /<!-- <tbody>[\s\S]*?<\/tbody> -->/,
+    `<tbody>${tbodyContent}</tbody>`
+  ); // Replace tbody
+  templateHtml = templateHtml.replace(
+    /Dernière update le X/,
+    `Dernière update le ${dateString} à ${timeString}`
+  ); // Replace date
+
+  return templateHtml;
 }
 
 /**
@@ -389,6 +320,7 @@ async function generateScoreboards(
       players: mostPlayers,
       property: "caughtCount",
       tableId: "table-most",
+      templateFile: path.join(process.cwd(), "./src/mostScoreboard.html"),
       htmlFile: path.join(OUTPUT_DIR, "most-pokemon.html"),
       imageFile: path.join(OUTPUT_DIR, "most.png"),
     },
@@ -397,6 +329,7 @@ async function generateScoreboards(
       players: shinyPlayers,
       property: "shinyCount",
       tableId: "table-shiny",
+      templateFile: path.join(process.cwd(), "./src/shinyScoreboard.html"),
       htmlFile: path.join(OUTPUT_DIR, "most-shiny.html"),
       imageFile: path.join(OUTPUT_DIR, "shiny.png"),
     },
@@ -405,18 +338,20 @@ async function generateScoreboards(
       players: legendaryPlayers,
       property: "legendaryCount",
       tableId: "table-legendaries",
+      templateFile: path.join(process.cwd(), "./src/legendaryScoreboard.html"),
       htmlFile: path.join(OUTPUT_DIR, "most-legendary.html"),
       imageFile: path.join(OUTPUT_DIR, "leg.png"),
     },
   ];
 
   for (const scoreboard of scoreboards) {
-    // Generate the HTML for this scoreboard
+    // Generate the HTML for this scoreboard using the template
     const html = generateScoreboardHtml(
       scoreboard.players,
       scoreboard.title,
       scoreboard.property,
-      scoreboard.tableId
+      scoreboard.tableId,
+      scoreboard.templateFile
     );
 
     // Save the HTML file
@@ -431,7 +366,6 @@ async function generateScoreboards(
     );
   }
 }
-
 /* ============================ Leaderboard Retrieval Functions ============================ */
 
 /**
@@ -471,8 +405,8 @@ export function getMostLegendariesPlayers(players) {
 
 (async () => {
   try {
-    clearLocalData();
-    await downloadPlayerData();
+    // clearLocalData();
+    // await downloadPlayerData();
 
     const namesMapping = loadUserCacheMapping();
     const players = readPlayerData(namesMapping);

@@ -2,97 +2,344 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Most Legendary Pokémon Scoreboard</title>
+    <title>Qui a attrapé le plus de légendaires ?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="scoreboard.css" />
     <style>
-      /* Orange theme: Define column backgrounds */
       :root {
-        --col1-bg: #b04604;
-        --col2-bg: #fc9933;
-        --col3-bg: #fdcc66;
-        --col4-bg: #fc650b;
-        --bg-color: #ffffff;
-        --text-color: #ffffff;
-      }
-      .col-1 {
-        background-color: var(--col1-bg);
-      }
-      .col-2 {
-        background-color: var(--col2-bg);
-      }
-      .col-3 {
-        background-color: var(--col3-bg);
-      }
-      .col-4 {
-        background-color: var(--col4-bg);
+        --header-footer-bg: #b04604 !important;
+        --odd-row-bg: #fc9933 !important; /* For odd row zebra */
+        --even-row-bg: #fdcc66 !important; /* For even row zebra */
+        --table-bg: #fc650b !important; /* Overall table background */
       }
     </style>
   </head>
   <body>
-    <h1>Most Legendary Pokémon</h1>
     <table>
-      <tbody>
+      <thead>
         <tr>
-          <td class="score-cell col-1 top1">1. LegendaryPlayer 1 – 20</td>
-          <td class="score-cell col-2">11. LegendaryPlayer 11 – 18</td>
-          <td class="score-cell col-3">21. LegendaryPlayer 21 – 16</td>
-          <td class="score-cell col-4">31. LegendaryPlayer 31 – 14</td>
+          <th
+            colspan="4"
+            style="padding: 16px; font-size: 20px; text-align: center"
+          >
+            Qui a attrapé le plus de légendaires ?
+          </th>
+        </tr>
+      </thead>
+      <!-- <tbody>
+        <tr>
+          <td class="score-cell top1">
+            <div class="grid-container">
+              <span>1.</span>
+              <span>Player 1</span>
+              <span>100</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>11.</span>
+              <span>Player 11</span>
+              <span>90</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>21.</span>
+              <span>Player 21</span>
+              <span>80</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>31.</span>
+              <span>Player 31</span>
+              <span>70</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1 top2">2. LegendaryPlayer 2 – 19</td>
-          <td class="score-cell col-2">12. LegendaryPlayer 12 – 17</td>
-          <td class="score-cell col-3">22. LegendaryPlayer 22 – 15</td>
-          <td class="score-cell col-4">32. LegendaryPlayer 32 – 13</td>
+          <td class="score-cell top2">
+            <div class="grid-container">
+              <span>2.</span>
+              <span>Player 2</span>
+              <span>99</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>12.</span>
+              <span>Player 12</span>
+              <span>89</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>22.</span>
+              <span>Player 22</span>
+              <span>79</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>32.</span>
+              <span>Player 32</span>
+              <span>69</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1 top3">3. LegendaryPlayer 3 – 18</td>
-          <td class="score-cell col-2">13. LegendaryPlayer 13 – 16</td>
-          <td class="score-cell col-3">23. LegendaryPlayer 23 – 14</td>
-          <td class="score-cell col-4">33. LegendaryPlayer 33 – 12</td>
+          <td class="score-cell top3">
+            <div class="grid-container">
+              <span>3.</span>
+              <span>Player 3</span>
+              <span>98</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>13.</span>
+              <span>Player 13</span>
+              <span>88</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>23.</span>
+              <span>Player 23</span>
+              <span>78</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>33.</span>
+              <span>Player 33</span>
+              <span>68</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">4. LegendaryPlayer 4 – 17</td>
-          <td class="score-cell col-2">14. LegendaryPlayer 14 – 15</td>
-          <td class="score-cell col-3">24. LegendaryPlayer 24 – 13</td>
-          <td class="score-cell col-4">34. LegendaryPlayer 34 – 11</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>4.</span>
+              <span>Player 4</span>
+              <span>97</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>14.</span>
+              <span>Player 14</span>
+              <span>87</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>24.</span>
+              <span>Player 24</span>
+              <span>77</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>34.</span>
+              <span>Player 34</span>
+              <span>67</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">5. LegendaryPlayer 5 – 16</td>
-          <td class="score-cell col-2">15. LegendaryPlayer 15 – 14</td>
-          <td class="score-cell col-3">25. LegendaryPlayer 25 – 12</td>
-          <td class="score-cell col-4">35. LegendaryPlayer 35 – 10</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>5.</span>
+              <span>Player 5</span>
+              <span>96</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>15.</span>
+              <span>Player 15</span>
+              <span>86</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>25.</span>
+              <span>Player 25</span>
+              <span>76</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>35.</span>
+              <span>Player 35</span>
+              <span>66</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">6. LegendaryPlayer 6 – 15</td>
-          <td class="score-cell col-2">16. LegendaryPlayer 16 – 13</td>
-          <td class="score-cell col-3">26. LegendaryPlayer 26 – 11</td>
-          <td class="score-cell col-4">36. LegendaryPlayer 36 – 9</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>6.</span>
+              <span>Player 6</span>
+              <span>95</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>16.</span>
+              <span>Player 16</span>
+              <span>85</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>26.</span>
+              <span>Player 26</span>
+              <span>75</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>36.</span>
+              <span>Player 36</span>
+              <span>65</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">7. LegendaryPlayer 7 – 14</td>
-          <td class="score-cell col-2">17. LegendaryPlayer 17 – 12</td>
-          <td class="score-cell col-3">27. LegendaryPlayer 27 – 10</td>
-          <td class="score-cell col-4">37. LegendaryPlayer 37 – 8</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>7.</span>
+              <span>Player 7</span>
+              <span>94</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>17.</span>
+              <span>Player 17</span>
+              <span>84</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>27.</span>
+              <span>Player 27</span>
+              <span>74</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>37.</span>
+              <span>Player 37</span>
+              <span>64</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">8. LegendaryPlayer 8 – 13</td>
-          <td class="score-cell col-2">18. LegendaryPlayer 18 – 11</td>
-          <td class="score-cell col-3">28. LegendaryPlayer 28 – 9</td>
-          <td class="score-cell col-4">38. LegendaryPlayer 38 – 7</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>8.</span>
+              <span>Player 8</span>
+              <span>93</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>18.</span>
+              <span>Player 18</span>
+              <span>83</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>28.</span>
+              <span>Player 28</span>
+              <span>73</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>38.</span>
+              <span>Player 38</span>
+              <span>63</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">9. LegendaryPlayer 9 – 12</td>
-          <td class="score-cell col-2">19. LegendaryPlayer 19 – 10</td>
-          <td class="score-cell col-3">29. LegendaryPlayer 29 – 8</td>
-          <td class="score-cell col-4">39. LegendaryPlayer 39 – 6</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>9.</span>
+              <span>Player 9</span>
+              <span>92</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>19.</span>
+              <span>Player 19</span>
+              <span>82</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>29.</span>
+              <span>Player 29</span>
+              <span>72</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>39.</span>
+              <span>Player 39</span>
+              <span>62</span>
+            </div>
+          </td>
         </tr>
         <tr>
-          <td class="score-cell col-1">10. LegendaryPlayer 10 – 11</td>
-          <td class="score-cell col-2">20. LegendaryPlayer 20 – 9</td>
-          <td class="score-cell col-3">30. LegendaryPlayer 30 – 7</td>
-          <td class="score-cell col-4">40. LegendaryPlayer 40 – 5</td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>10.</span>
+              <span>Player 10</span>
+              <span>91</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>20.</span>
+              <span>Player 20</span>
+              <span>81</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>30.</span>
+              <span>Player 30</span>
+              <span>71</span>
+            </div>
+          </td>
+          <td class="score-cell">
+            <div class="grid-container">
+              <span>40.</span>
+              <span>Player 40</span>
+              <span>61</span>
+            </div>
+          </td>
         </tr>
-      </tbody>
+      </tbody> -->
+      <tfoot>
+        <tr>
+          <td colspan="4" style="padding: 12px; text-align: center">
+            Dernière update le X
+          </td>
+        </tr>
+      </tfoot>
     </table>
   </body>
 </html>

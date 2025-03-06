@@ -2,71 +2,21 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Qui a attrapé le plus de pokemon ?</title>
+    <title>Most Pokémon Caught Scoreboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="scoreboard.css" />
     <style>
+      /* Override with higher specificity to ensure these variables take precedence */
       :root {
-        --header-footer-bg: #15ff00;
-        --odd-row-bg: #d500bc; /* For odd row zebra */
-        --even-row-bg: #c1e427; /* For even row zebra */
-        --table-bg: #312825; /* Overall table background */
-        --text-color: white;
-      }
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: Poppins, monospace;
-        font-size: 16px;
-        text-align: center;
-        color: var(--text-color);
-      }
-      table {
-        width: 1200px;
-        margin: 0 auto;
-        border-collapse: collapse;
-        background-color: var(--table-bg);
-      }
-      thead,
-      tfoot {
-        background-color: var(--header-footer-bg);
-      }
-      tbody tr:nth-child(odd) {
-        background-color: var(--odd-row-bg);
-      }
-      tbody tr:nth-child(even) {
-        background-color: var(--even-row-bg);
-      }
-      .score-cell {
-        width: 25%;
-        font-size: 16px;
-        align-items: center;
-        gap: 5px;
-      }
-      .grid-container {
-        display: grid;
-        grid-template-columns: 40px 1fr 60px;
-        padding: 8px;
-        align-items: center;
-      }
-      /* Top rank overrides */
-      .top1 {
-        background-color: #e8a203 !important;
-      }
-      .top2 {
-        background-color: #808080 !important;
-      }
-      .top3 {
-        background-color: #7b3d00 !important;
-      }
-      .top1,
-      .top2,
-      .top3 {
-        font-weight: bold;
+        --header-footer-bg: #05274e !important;
+        --odd-row-bg: #0c3b76 !important; /* For odd row zebra */
+        --even-row-bg: #144f9e !important; /* For even row zebra */
+        --table-bg: #1b62c4 !important; /* Overall table background */
       }
     </style>
   </head>
@@ -82,312 +32,291 @@
           </th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
+      <tbody><tr>
           <td class="score-cell top1">
             <div class="grid-container">
               <span>1.</span>
-              <span>NightLight65</span>
-              <span>895</span>
+              <span>Otachisaburi</span>
+              <span>980</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>11.</span>
               <span>Eniox_0</span>
               <span>577</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>21.</span>
               <span>ashbee404</span>
-              <span>384</span>
+              <span>390</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>31.</span>
               <span>bspkrs_</span>
-              <span>244</span>
+              <span>256</span>
             </div>
-          </td>
-        </tr>
-        <tr>
+          </td></tr><tr>
           <td class="score-cell top2">
             <div class="grid-container">
               <span>2.</span>
-              <span>Otachisaburi</span>
-              <span>872</span>
+              <span>NightLight65</span>
+              <span>928</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>12.</span>
-              <span>Azufinn</span>
-              <span>532</span>
+              <span>joueurwooki</span>
+              <span>569</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>22.</span>
-              <span>Bazouho</span>
-              <span>382</span>
+              <span>Adri3n76</span>
+              <span>386</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>32.</span>
-              <span>Zelderos</span>
-              <span>241</span>
+              <span>NeoPreda</span>
+              <span>247</span>
             </div>
-          </td>
-        </tr>
-        <tr>
+          </td></tr><tr>
           <td class="score-cell top3">
             <div class="grid-container">
               <span>3.</span>
               <span>NekaiElDog</span>
-              <span>754</span>
+              <span>775</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>13.</span>
-              <span>Le_willl</span>
-              <span>504</span>
+              <span>Azufinn</span>
+              <span>537</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>23.</span>
-              <span>RazerHus</span>
-              <span>358</span>
+              <span>Bazouho</span>
+              <span>382</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>33.</span>
               <span>FunBass</span>
               <span>236</span>
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td class="score-cell">
+          </td></tr><tr>
+          <td class="score-cell ">
             <div class="grid-container">
               <span>4.</span>
-              <span>Methyril</span>
-              <span>696</span>
+              <span>HeatleoDuster</span>
+              <span>746</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>14.</span>
-              <span>joueurwooki</span>
-              <span>496</span>
+              <span>Le_willl</span>
+              <span>516</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>24.</span>
-              <span>KcNailik</span>
-              <span>351</span>
+              <span>RazerHus</span>
+              <span>358</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>34.</span>
-              <span>Elestiano</span>
-              <span>204</span>
+              <span>Ezequio</span>
+              <span>212</span>
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td class="score-cell">
+          </td></tr><tr>
+          <td class="score-cell ">
             <div class="grid-container">
               <span>5.</span>
-              <span>HeatleoDuster</span>
-              <span>691</span>
+              <span>Methyril</span>
+              <span>737</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>15.</span>
               <span>SyKape</span>
-              <span>460</span>
+              <span>463</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>25.</span>
               <span>Solveurk</span>
               <span>343</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>35.</span>
-              <span>AceCertix</span>
-              <span>192</span>
+              <span>Elestiano</span>
+              <span>204</span>
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td class="score-cell">
+          </td></tr><tr>
+          <td class="score-cell ">
             <div class="grid-container">
               <span>6.</span>
               <span>Lutjio</span>
               <span>674</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>16.</span>
               <span>Noiartam</span>
               <span>440</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>26.</span>
               <span>SnowGeek_</span>
               <span>330</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>36.</span>
               <span>ShinLeGoat</span>
-              <span>191</span>
+              <span>203</span>
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td class="score-cell">
+          </td></tr><tr>
+          <td class="score-cell ">
             <div class="grid-container">
               <span>7.</span>
-              <span>Odhyn</span>
-              <span>644</span>
+              <span>Lookoomcitron</span>
+              <span>671</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>17.</span>
-              <span>Swqsh</span>
-              <span>408</span>
+              <span>KcNailik</span>
+              <span>422</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>27.</span>
               <span>Lenny_san</span>
               <span>298</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>37.</span>
-              <span>Ezequio</span>
-              <span>161</span>
+              <span>AceCertix</span>
+              <span>192</span>
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td class="score-cell">
+          </td></tr><tr>
+          <td class="score-cell ">
             <div class="grid-container">
               <span>8.</span>
-              <span>Banamas_</span>
-              <span>627</span>
+              <span>Odhyn</span>
+              <span>644</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>18.</span>
-              <span>Theirastria</span>
-              <span>407</span>
+              <span>Swqsh</span>
+              <span>408</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>28.</span>
               <span>Freeze_zaeyo_</span>
               <span>293</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>38.</span>
               <span>Lixael</span>
               <span>160</span>
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td class="score-cell">
+          </td></tr><tr>
+          <td class="score-cell ">
             <div class="grid-container">
               <span>9.</span>
-              <span>Lookoomcitron</span>
-              <span>608</span>
+              <span>Banamas_</span>
+              <span>627</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>19.</span>
-              <span>Riivinho</span>
+              <span>Theirastria</span>
               <span>407</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>29.</span>
               <span>PyroxX59</span>
               <span>283</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>39.</span>
               <span>Xtrem_lalaniix</span>
               <span>153</span>
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td class="score-cell">
+          </td></tr><tr>
+          <td class="score-cell ">
             <div class="grid-container">
               <span>10.</span>
               <span>Thomsondu45</span>
               <span>603</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>20.</span>
-              <span>Adri3n76</span>
-              <span>386</span>
+              <span>Riivinho</span>
+              <span>407</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>30.</span>
-              <span>NeoPreda</span>
-              <span>247</span>
+              <span>Zelderos</span>
+              <span>269</span>
             </div>
           </td>
-          <td class="score-cell">
+          <td class="score-cell ">
             <div class="grid-container">
               <span>40.</span>
-              <span>De_Oceane</span>
-              <span>144</span>
+              <span>Zalco_Off</span>
+              <span>146</span>
             </div>
-          </td>
-        </tr>
-      </tbody>
+          </td></tr></tbody>
       <tfoot>
         <tr>
           <td colspan="4" style="padding: 12px; text-align: center">
-            Dernière update le 05/03/2025 à 22:45
+            Dernière update le 06/03/2025 à 08:24
           </td>
         </tr>
       </tfoot>
