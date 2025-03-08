@@ -5,11 +5,11 @@ import { FTP_CONFIG } from "./ftpConfig.js";
 import { legendaryPokemonArray } from "./legendaries.js";
 import puppeteer from "puppeteer";
 
-// Define a folder for FTP downloads (player data) and a separate output folder for HTML/images.
+// Define paths for FTP downloads and output files.
 const USER_CACHE_FILE = path.join(FTP_CONFIG.localPath, "usercache.json");
+const WHITELIST_FILE = path.join(FTP_CONFIG.localPath, "whitelist.json");
 const OUTPUT_DIR = path.join(process.cwd(), "output");
 
-// Ensure the output directory exists.
 if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
@@ -18,9 +18,6 @@ const ignoreNames = []; // Define names to ignore, if any
 
 /* ======================== FTP Download Functions ======================== */
 
-/**
- * Clears the local data directory.
- */
 function clearLocalData() {
   if (fs.existsSync(FTP_CONFIG.localPath)) {
     fs.rmSync(FTP_CONFIG.localPath, { recursive: true, force: true });
@@ -28,12 +25,6 @@ function clearLocalData() {
   }
 }
 
-/**
- * Recursively downloads a remote directory from the FTP server.
- * @param {Client} client - The FTP client.
- * @param {string} remoteDir - Remote directory path.
- * @param {string} localDir - Local directory path.
- */
 async function downloadDirectory(client, remoteDir, localDir) {
   if (!fs.existsSync(localDir)) {
     fs.mkdirSync(localDir, { recursive: true });
@@ -50,12 +41,6 @@ async function downloadDirectory(client, remoteDir, localDir) {
   }
 }
 
-/**
- * Downloads a single file from the FTP server.
- * @param {Client} client - The FTP client.
- * @param {string} remotePath - Remote file path.
- * @param {string} localFilePath - Local file path.
- */
 async function downloadFile(client, remotePath, localFilePath) {
   const localDir = path.dirname(localFilePath);
   if (!fs.existsSync(localDir)) {
@@ -65,9 +50,6 @@ async function downloadFile(client, remotePath, localFilePath) {
   await client.downloadTo(localFilePath, remotePath);
 }
 
-/**
- * Connects to the FTP server and downloads all player data along with the user cache.
- */
 async function downloadPlayerData() {
   const client = new Client();
   client.ftp.verbose = true;
@@ -81,14 +63,13 @@ async function downloadPlayerData() {
     });
     console.log("Connected to FTP server.");
 
-    // Download the main player data folder
     await downloadDirectory(
       client,
       FTP_CONFIG.remotePath,
       FTP_CONFIG.localPath
     );
-    // Download the user cache file separately
     await downloadFile(client, FTP_CONFIG.remoteUserCache, USER_CACHE_FILE);
+    await downloadFile(client, "/Minecraft/whitelist.json", WHITELIST_FILE);
     console.log("FTP download complete.");
   } catch (error) {
     console.error("Error during FTP download:", error);
@@ -99,10 +80,6 @@ async function downloadPlayerData() {
 
 /* ======================= Data Processing Functions ====================== */
 
-/**
- * Loads the user cache file and builds a mapping from UUID to player name.
- * @returns {Object} A mapping object with keys as lowercase UUIDs and values as names.
- */
 function loadUserCacheMapping() {
   if (!fs.existsSync(USER_CACHE_FILE)) {
     console.error(`User cache file not found at ${USER_CACHE_FILE}`);
@@ -121,11 +98,19 @@ function loadUserCacheMapping() {
   }
 }
 
-/**
- * Reads each player's JSON file from the local data and computes counts.
- * @param {Object} namesMapping - Mapping of user UUIDs to names.
- * @returns {Array} List of player objects with counts.
- */
+function loadWhitelist() {
+  if (!fs.existsSync(WHITELIST_FILE)) {
+    console.error(`Whitelist file not found at ${WHITELIST_FILE}`);
+    return [];
+  }
+  try {
+    return JSON.parse(fs.readFileSync(WHITELIST_FILE, "utf8"));
+  } catch (error) {
+    console.error("Error reading whitelist file:", error);
+    return [];
+  }
+}
+
 function readPlayerData(namesMapping) {
   const players = [];
   if (!fs.existsSync(FTP_CONFIG.localPath)) {
@@ -140,7 +125,6 @@ function readPlayerData(namesMapping) {
 
   directories.forEach((dir) => {
     const dirPath = path.join(FTP_CONFIG.localPath, dir);
-    // Consider all JSON files except the user cache file
     const jsonFiles = fs
       .readdirSync(dirPath)
       .filter((file) => file.endsWith(".json") && file !== "usercache.json");
@@ -157,14 +141,11 @@ function readPlayerData(namesMapping) {
         let shinyCount = 0;
         let legendaryCount = 0;
 
-        // Check if the data contains Cobbledex discovery details
         if (data.extraData?.cobbledex_discovery?.registers) {
           const registers = data.extraData.cobbledex_discovery.registers;
-          // Create a list of normalized legendary Pokémon names for comparison
           const normalizedLegendaries = legendaryPokemonArray.map((name) =>
             name.toLowerCase()
           );
-          // Process each Pokémon entry
           Object.entries(registers).forEach(([pokemon, variants]) => {
             Object.values(variants).forEach((details) => {
               if (details.status === "CAUGHT") {
@@ -179,7 +160,14 @@ function readPlayerData(namesMapping) {
             });
           });
         }
-        players.push({ playerName, caughtCount, shinyCount, legendaryCount });
+        // Include uuid for whitelist filtering
+        players.push({
+          uuid: normalizedUUID,
+          playerName,
+          caughtCount,
+          shinyCount,
+          legendaryCount,
+        });
       } catch (error) {
         console.error(`Error processing file ${filePath}:`, error);
       }
@@ -190,15 +178,6 @@ function readPlayerData(namesMapping) {
 
 /* ====================== HTML & Image Generation Functions ====================== */
 
-/**
- * Generates an HTML string with player data for the scoreboard using a template file.
- * @param {Array} players - Sorted player data array.
- * @param {string} title - Title for the scoreboard.
- * @param {string} scoreProperty - Property name to display (caughtCount, shinyCount, or legendaryCount).
- * @param {string} tableId - ID to assign to the table element.
- * @param {string} templateFile - Path to the HTML template file.
- * @returns {string} HTML content.
- */
 function generateScoreboardHtml(
   players,
   title,
@@ -206,14 +185,10 @@ function generateScoreboardHtml(
   tableId,
   templateFile
 ) {
-  // Read the template file
   let templateHtml = fs.readFileSync(templateFile, "utf8");
-
-  // Limit to 40 players maximum (10 rows and 4 columns)
   const topPlayers = players.slice(0, 40);
   const rows = 10;
   const columns = 4;
-
   let tbodyContent = "";
 
   // Use column-major order: for each row, iterate over each column
@@ -225,7 +200,6 @@ function generateScoreboardHtml(
         playerIndex < topPlayers.length ? topPlayers[playerIndex] : null;
       const rank = playerIndex + 1;
       const topClass = rank <= 3 ? `top${rank}` : "";
-
       if (player) {
         tbodyContent += `
           <td class="score-cell ${topClass}">
@@ -236,7 +210,6 @@ function generateScoreboardHtml(
             </div>
           </td>`;
       } else {
-        // Empty cell if we don't have enough players
         tbodyContent += `
           <td class="score-cell">
             <div class="grid-container">
@@ -250,7 +223,6 @@ function generateScoreboardHtml(
     tbodyContent += "</tr>";
   }
 
-  // Format the current date and time using French locale
   const now = new Date();
   const dateString = now.toLocaleDateString("fr-FR");
   const timeString = now.toLocaleTimeString("fr-FR", {
@@ -258,57 +230,37 @@ function generateScoreboardHtml(
     minute: "2-digit",
   });
 
-  // Replace placeholders in the template
-  templateHtml = templateHtml.replace(/(<table[^>]*)>/, `$1 id="${tableId}">`); // Add table ID
+  templateHtml = templateHtml.replace(/(<table[^>]*)>/, `$1 id="${tableId}">`);
   templateHtml = templateHtml.replace(
     /<th[^>]*>.*?<\/th>/,
     `<th colspan="4" style="padding: 16px; font-size: 20px; text-align: center">${title}</th>`
-  ); // Replace title
+  );
   templateHtml = templateHtml.replace(
     /<!-- <tbody>[\s\S]*?<\/tbody> -->/,
     `<tbody>${tbodyContent}</tbody>`
-  ); // Replace tbody
+  );
   templateHtml = templateHtml.replace(
     /Dernière update le X/,
     `Dernière update le ${dateString} à ${timeString}`
-  ); // Replace date
+  );
 
   return templateHtml;
 }
 
-/**
- * Uses Puppeteer to create a screenshot of just the table element.
- * @param {string} htmlFilePath - Path to the HTML file.
- * @param {string} tableId - The ID of the table element to screenshot.
- * @param {string} outputImagePath - Path where the image will be saved.
- */
 async function generateTableScreenshot(htmlFilePath, tableId, outputImagePath) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-
-  // Use the file protocol to load the HTML file
   await page.goto(`file://${htmlFilePath}`, { waitUntil: "networkidle0" });
-
-  // Find the table element by ID
   const tableElement = await page.$(`#${tableId}`);
-
   if (tableElement) {
-    // Take a screenshot of just the table element
     await tableElement.screenshot({ path: outputImagePath });
     console.log(`Saved table image to ${outputImagePath}`);
   } else {
     console.error(`Table element with ID "${tableId}" not found`);
   }
-
   await browser.close();
 }
 
-/**
- * Generates the scoreboard HTMLs and images for each leaderboard category.
- * @param {Array} mostPlayers - Sorted players for most Pokémon caught.
- * @param {Array} shinyPlayers - Sorted players for most shiny Pokémon.
- * @param {Array} legendaryPlayers - Sorted players for most legendaries.
- */
 async function generateScoreboards(
   mostPlayers,
   shinyPlayers,
@@ -345,7 +297,6 @@ async function generateScoreboards(
   ];
 
   for (const scoreboard of scoreboards) {
-    // Generate the HTML for this scoreboard using the template
     const html = generateScoreboardHtml(
       scoreboard.players,
       scoreboard.title,
@@ -353,12 +304,8 @@ async function generateScoreboards(
       scoreboard.tableId,
       scoreboard.templateFile
     );
-
-    // Save the HTML file
     fs.writeFileSync(scoreboard.htmlFile, html, "utf8");
     console.log(`HTML scoreboard saved to ${scoreboard.htmlFile}`);
-
-    // Generate the table screenshot from the HTML
     await generateTableScreenshot(
       scoreboard.htmlFile,
       scoreboard.tableId,
@@ -366,35 +313,21 @@ async function generateScoreboards(
     );
   }
 }
+
 /* ============================ Leaderboard Retrieval Functions ============================ */
 
-/**
- * Retrieves and sorts players by total Pokémon caught.
- * @param {Array} players - List of player objects.
- * @returns {Array} Sorted list of players by caughtCount.
- */
 export function getMostPokemonPlayers(players) {
   return players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.caughtCount - a.caughtCount);
 }
 
-/**
- * Retrieves and sorts players by shiny Pokémon count.
- * @param {Array} players - List of player objects.
- * @returns {Array} Sorted list of players by shinyCount.
- */
 export function getMostShinyPlayers(players) {
   return players
     .filter((player) => !ignoreNames.includes(player.playerName))
     .sort((a, b) => b.shinyCount - a.shinyCount);
 }
 
-/**
- * Retrieves and sorts players by legendary Pokémon count.
- * @param {Array} players - List of player objects.
- * @returns {Array} Sorted list of players by legendaryCount.
- */
 export function getMostLegendariesPlayers(players) {
   return players
     .filter((player) => !ignoreNames.includes(player.playerName))
@@ -413,12 +346,20 @@ export function getMostLegendariesPlayers(players) {
 
     if (!Array.isArray(players)) throw new Error("Player data is not an array");
 
-    // Retrieve sorted leaderboards
-    const mostPokemon = getMostPokemonPlayers(players);
-    const mostShiny = getMostShinyPlayers(players);
-    const mostLegendaries = getMostLegendariesPlayers(players);
+    // Load whitelist and filter players based on allowed UUIDs
+    const whitelistEntries = loadWhitelist();
+    const allowedUUIDs = new Set(
+      whitelistEntries.map((entry) => entry.uuid.toLowerCase())
+    );
+    const whitelistedPlayers = players.filter((player) =>
+      allowedUUIDs.has(player.uuid)
+    );
 
-    // Generate HTML files and create images with Puppeteer
+    // Retrieve sorted leaderboards using only whitelisted players
+    const mostPokemon = getMostPokemonPlayers(whitelistedPlayers);
+    const mostShiny = getMostShinyPlayers(whitelistedPlayers);
+    const mostLegendaries = getMostLegendariesPlayers(whitelistedPlayers);
+
     await generateScoreboards(mostPokemon, mostShiny, mostLegendaries);
   } catch (error) {
     console.error("An error occurred:", error);
