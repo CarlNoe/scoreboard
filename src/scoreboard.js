@@ -338,8 +338,8 @@ export function getMostLegendariesPlayers(players) {
 
 (async () => {
   try {
-    // clearLocalData();
-    // await downloadPlayerData();
+    clearLocalData();
+    await downloadPlayerData();
 
     const namesMapping = loadUserCacheMapping();
     const players = readPlayerData(namesMapping);
