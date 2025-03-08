@@ -4,11 +4,17 @@ import path from "path";
 import { FTP_CONFIG } from "./ftpConfig.js";
 import { legendaryPokemonArray } from "./legendaries.js";
 import puppeteer from "puppeteer";
+import { fileURLToPath } from "url";
 
-// Define paths for FTP downloads and output files.
-const USER_CACHE_FILE = path.join(FTP_CONFIG.localPath, "usercache.json");
-const WHITELIST_FILE = path.join(FTP_CONFIG.localPath, "whitelist.json");
-const OUTPUT_DIR = path.join(process.cwd(), "output");
+// Determine the current file's directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Define paths relative to the script file
+const LOCAL_FTP_PATH = path.join(__dirname, FTP_CONFIG.localPath);
+const USER_CACHE_FILE = path.join(LOCAL_FTP_PATH, "usercache.json");
+const WHITELIST_FILE = path.join(LOCAL_FTP_PATH, "whitelist.json");
+const OUTPUT_DIR = path.join(__dirname, "../output");
 
 if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -19,9 +25,9 @@ const ignoreNames = []; // Define names to ignore, if any
 /* ======================== FTP Download Functions ======================== */
 
 function clearLocalData() {
-  if (fs.existsSync(FTP_CONFIG.localPath)) {
-    fs.rmSync(FTP_CONFIG.localPath, { recursive: true, force: true });
-    console.log(`Cleared local data in ${FTP_CONFIG.localPath}`);
+  if (fs.existsSync(LOCAL_FTP_PATH)) {
+    fs.rmSync(LOCAL_FTP_PATH, { recursive: true, force: true });
+    console.log(`Cleared local data in ${LOCAL_FTP_PATH}`);
   }
 }
 
@@ -63,11 +69,7 @@ async function downloadPlayerData() {
     });
     console.log("Connected to FTP server.");
 
-    await downloadDirectory(
-      client,
-      FTP_CONFIG.remotePath,
-      FTP_CONFIG.localPath
-    );
+    await downloadDirectory(client, FTP_CONFIG.remotePath, LOCAL_FTP_PATH);
     await downloadFile(client, FTP_CONFIG.remoteUserCache, USER_CACHE_FILE);
     await downloadFile(client, "/Minecraft/whitelist.json", WHITELIST_FILE);
     console.log("FTP download complete.");
@@ -113,18 +115,18 @@ function loadWhitelist() {
 
 function readPlayerData(namesMapping) {
   const players = [];
-  if (!fs.existsSync(FTP_CONFIG.localPath)) {
-    console.error(`Local path ${FTP_CONFIG.localPath} does not exist.`);
+  if (!fs.existsSync(LOCAL_FTP_PATH)) {
+    console.error(`Local path ${LOCAL_FTP_PATH} does not exist.`);
     return players;
   }
   // Read each subdirectory (each representing a player)
   const directories = fs
-    .readdirSync(FTP_CONFIG.localPath, { withFileTypes: true })
+    .readdirSync(LOCAL_FTP_PATH, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name);
 
   directories.forEach((dir) => {
-    const dirPath = path.join(FTP_CONFIG.localPath, dir);
+    const dirPath = path.join(LOCAL_FTP_PATH, dir);
     const jsonFiles = fs
       .readdirSync(dirPath)
       .filter((file) => file.endsWith(".json") && file !== "usercache.json");
@@ -272,7 +274,7 @@ async function generateScoreboards(
       players: mostPlayers,
       property: "caughtCount",
       tableId: "table-most",
-      templateFile: path.join(process.cwd(), "./src/mostScoreboard.html"),
+      templateFile: path.join(__dirname, "mostScoreboard.html"),
       htmlFile: path.join(OUTPUT_DIR, "most-pokemon.html"),
       imageFile: path.join(OUTPUT_DIR, "most.png"),
     },
@@ -281,7 +283,7 @@ async function generateScoreboards(
       players: shinyPlayers,
       property: "shinyCount",
       tableId: "table-shiny",
-      templateFile: path.join(process.cwd(), "./src/shinyScoreboard.html"),
+      templateFile: path.join(__dirname, "shinyScoreboard.html"),
       htmlFile: path.join(OUTPUT_DIR, "most-shiny.html"),
       imageFile: path.join(OUTPUT_DIR, "shiny.png"),
     },
@@ -290,7 +292,7 @@ async function generateScoreboards(
       players: legendaryPlayers,
       property: "legendaryCount",
       tableId: "table-legendaries",
-      templateFile: path.join(process.cwd(), "./src/legendaryScoreboard.html"),
+      templateFile: path.join(__dirname, "legendaryScoreboard.html"),
       htmlFile: path.join(OUTPUT_DIR, "most-legendary.html"),
       imageFile: path.join(OUTPUT_DIR, "leg.png"),
     },
@@ -338,8 +340,8 @@ export function getMostLegendariesPlayers(players) {
 
 (async () => {
   try {
-    clearLocalData();
-    await downloadPlayerData();
+    // clearLocalData();
+    // await downloadPlayerData();
 
     const namesMapping = loadUserCacheMapping();
     const players = readPlayerData(namesMapping);
