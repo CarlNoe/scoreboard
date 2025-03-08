@@ -316,6 +316,14 @@ async function generateScoreboards(
   }
 }
 
+function copyScoreboardCss() {
+  // Adjust the source path if your scoreboard.css is located elsewhere
+  const cssSource = path.join(__dirname, "scoreboard.css");
+  const cssDest = path.join(OUTPUT_DIR, "scoreboard.css");
+  fs.copyFileSync(cssSource, cssDest);
+  console.log(`Copied scoreboard.css from ${cssSource} to ${cssDest}`);
+}
+
 /* ============================ Leaderboard Retrieval Functions ============================ */
 
 export function getMostPokemonPlayers(players) {
@@ -361,6 +369,8 @@ export function getMostLegendariesPlayers(players) {
     const mostPokemon = getMostPokemonPlayers(whitelistedPlayers);
     const mostShiny = getMostShinyPlayers(whitelistedPlayers);
     const mostLegendaries = getMostLegendariesPlayers(whitelistedPlayers);
+
+    copyScoreboardCss();
 
     await generateScoreboards(mostPokemon, mostShiny, mostLegendaries);
   } catch (error) {
